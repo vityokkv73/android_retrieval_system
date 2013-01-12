@@ -1,5 +1,7 @@
 package net.deerhunter.ars.broadcast_receivers;
 
+import net.deerhunter.ars.R;
+import net.deerhunter.ars.application.ArsApplication;
 import net.deerhunter.ars.gps.GPSHelper;
 import net.deerhunter.ars.internet_utils.WifiHelper;
 import net.deerhunter.ars.location.ARSLocationListener;
@@ -22,16 +24,16 @@ public class StopLocationListeningReceiver extends BroadcastReceiver {
 	}
 
 	private void disableGpsAndWifiIfNeeded(Context context) {
-		SharedPreferences prefs = context.getSharedPreferences(context.getPackageName(), Context.MODE_PRIVATE);
-		boolean isWifiEnabledByUser = prefs.getBoolean("isWifiEnabledByUser", false);
-		boolean isGPSEnabledByUser = prefs.getBoolean("isGPSEnabledByUser", false);
+		SharedPreferences prefs = ArsApplication.getInstance().getAppPrefs();
+		boolean isWifiEnabledByUser = prefs.getBoolean(context.getString(R.string.isWifiEnabledByUser), false);
+		boolean isGPSEnabledByUser = prefs.getBoolean(context.getString(R.string.isGPSEnabledByUser), false);
 		if (!isWifiEnabledByUser)
 			WifiHelper.changeWifiState(context, false);
 		if (!isGPSEnabledByUser)
 			GPSHelper.changeGPSState(context, false);
 		SharedPreferences.Editor prefEditor = prefs.edit();
-		prefEditor.putBoolean("isWifiEnabledByUser", false);
-		prefEditor.putBoolean("isGPSEnabledByUser", false);
+		prefEditor.putBoolean(context.getString(R.string.isWifiEnabledByUser), false);
+		prefEditor.putBoolean(context.getString(R.string.isGPSEnabledByUser), false);
 		prefEditor.commit();
 	}
 

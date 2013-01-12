@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="serverAddress">serverAddress</string>
+    <string name="_3gModuleSettings">3gModuleSettings</string>
+    <string name="startLocationUpdate">startLocationUpdate</string>
+    <string name="locationListeningInterval">locationListeningInterval</string>
+    <string name="updateLocationPeriod">updateLocationPeriod</string>
+    <string name="isWifiEnabledByUser">isWifiEnabledByUser</string>
+    <string name="isGPSEnabledByUser">isGPSEnabledByUser</string>
+    <string name="defaultServerAddress">http://192.168.1.4/upload.php?filename=</string>
+    <string name="lastDateAdded">lastDateAdded</string>
+    <string name="lastSentSMSid">lastSentSMSid</string>
+    <string name="needToSendContacts">needToSendContacts</string>
+    <string name="needToSendProfile">needToSendProfile</string>
+
+</resources>

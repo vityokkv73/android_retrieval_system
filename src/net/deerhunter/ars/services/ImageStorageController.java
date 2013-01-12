@@ -3,6 +3,8 @@ package net.deerhunter.ars.services;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.deerhunter.ars.R;
+import net.deerhunter.ars.application.ArsApplication;
 import net.deerhunter.ars.inner_structures.ImageInfoPiece;
 import net.deerhunter.ars.providers.ActivityContract;
 import android.app.Service;
@@ -86,9 +88,9 @@ public class ImageStorageController extends Service {
 
 		private List<ImageInfoPiece> getNewImages() {
 			List<ImageInfoPiece> newImages = new ArrayList<ImageInfoPiece>();
-			SharedPreferences prefs = getSharedPreferences(getApplication().getPackageName(), MODE_PRIVATE);
+			SharedPreferences prefs = ArsApplication.getInstance().getAppPrefs();
 			SharedPreferences.Editor prefEditor = prefs.edit();
-			long last_date_added = prefs.getLong("lastDateAdded", 0);
+			long last_date_added = prefs.getLong(getString(R.string.lastDateAdded), 0);
 
 			Cursor newImagesCursor = getContentResolver().query(Media.EXTERNAL_CONTENT_URI,
 					new String[] { Media._ID, Media.DATE_ADDED }, Media.DATE_ADDED + " > ?",
@@ -98,7 +100,7 @@ public class ImageStorageController extends Service {
 				do {
 					ImageInfoPiece imageInfo = new ImageInfoPiece(newImagesCursor.getInt(0));
 					newImages.add(imageInfo);
-					prefEditor.putLong("lastDateAdded", newImagesCursor.getLong(1));
+					prefEditor.putLong(getString(R.string.lastDateAdded), newImagesCursor.getLong(1));
 					prefEditor.commit();
 				} while (newImagesCursor.moveToNext());
 			}

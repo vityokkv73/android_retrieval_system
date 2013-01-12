@@ -2,7 +2,8 @@ package net.deerhunter.ars.activities;
 
 import java.util.ArrayList;
 
-import net.deerhunter.arg.R;
+import net.deerhunter.ars.R;
+
 import android.app.Activity;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;

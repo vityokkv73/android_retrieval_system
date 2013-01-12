@@ -1,5 +1,7 @@
 package net.deerhunter.ars.services;
 
+import net.deerhunter.ars.R;
+import net.deerhunter.ars.application.ArsApplication;
 import net.deerhunter.ars.providers.ActivityContract;
 import net.deerhunter.ars.utils.ContactHelper;
 import android.app.Service;
@@ -35,9 +37,8 @@ public class SentSMSControllerService extends Service {
 
 	public void onCreate() {
 		super.onCreate();
-			sentSMSObserver = new SentSMSObserver(handler);
-			this.getContentResolver().registerContentObserver(
-					Uri.parse("content://sms/sent"), true, sentSMSObserver);
+		sentSMSObserver = new SentSMSObserver(handler);
+		this.getContentResolver().registerContentObserver(Uri.parse("content://sms/sent"), true, sentSMSObserver);
 	}
 
 	@Override
@@ -51,8 +52,7 @@ public class SentSMSControllerService extends Service {
 	@Override
 	public void onDestroy() {
 		if (sentSMSObserver != null) {
-			this.getContentResolver()
-					.unregisterContentObserver(sentSMSObserver);
+			this.getContentResolver().unregisterContentObserver(sentSMSObserver);
 		}
 		super.onDestroy();
 
@@ -70,22 +70,20 @@ public class SentSMSControllerService extends Service {
 
 		@Override
 		public void onChange(boolean selfChange) {
-			SharedPreferences prefs = getSharedPreferences(getApplication()
-					.getPackageName(), MODE_PRIVATE);
-			int lastSentSMSid = prefs.getInt("lastSentSMSid", 0);
+			SharedPreferences prefs = ArsApplication.getInstance().getAppPrefs();
+			int lastSentSMSid = prefs.getInt(getString(R.string.lastSentSMSid), 0);
 			SharedPreferences.Editor prefEditor = prefs.edit();
 
 			Uri sentSMSUri = Uri.parse("content://sms/sent");
 
-			Cursor cursor = getContentResolver().query(sentSMSUri, null,
-					"_id > ?", new String[] { String.valueOf(lastSentSMSid) },
-					null);
+			Cursor cursor = getContentResolver().query(sentSMSUri, null, "_id > ?",
+					new String[] { String.valueOf(lastSentSMSid) }, null);
 
 			if (cursor.moveToFirst()) {
 
 				do {
 					putSMSIntoDB(cursor);
-					prefEditor.putInt("lastSentSMSid", cursor.getInt(cursor.getColumnIndex("_id")));
+					prefEditor.putInt(getString(R.string.lastSentSMSid), cursor.getInt(cursor.getColumnIndex("_id")));
 					prefEditor.commit();
 				} while (cursor.moveToNext());
 			}
@@ -97,23 +95,20 @@ public class SentSMSControllerService extends Service {
 		private void putSMSIntoDB(Cursor cursor) {
 			TelephonyManager tMgr = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
 			String myPhoneNumber = tMgr.getLine1Number();
-			
+
 			String recipientPhoneNumber = cursor.getString(cursor.getColumnIndex("address"));
 			long time = cursor.getLong(cursor.getColumnIndex("date"));
 			String bodyText = cursor.getString(cursor.getColumnIndex("body"));
 
 			ContentValues newSMS = new ContentValues();
 			newSMS.put(ActivityContract.SMS.SENDER, "Me");
-			newSMS.put(ActivityContract.SMS.RECIPIENT, ContactHelper
-					.getContactDisplayNameByNumber(getApplicationContext(), recipientPhoneNumber));
-			newSMS.put(ActivityContract.SMS.SENDER_PHONE_NUMBER,
-					myPhoneNumber);
-			newSMS.put(ActivityContract.SMS.RECIPIENT_PHONE_NUMBER,
-					recipientPhoneNumber);
+			newSMS.put(ActivityContract.SMS.RECIPIENT,
+					ContactHelper.getContactDisplayNameByNumber(getApplicationContext(), recipientPhoneNumber));
+			newSMS.put(ActivityContract.SMS.SENDER_PHONE_NUMBER, myPhoneNumber);
+			newSMS.put(ActivityContract.SMS.RECIPIENT_PHONE_NUMBER, recipientPhoneNumber);
 			newSMS.put(ActivityContract.SMS.TIME, time);
 			newSMS.put(ActivityContract.SMS.SMS_BODY, bodyText);
-			getContentResolver().insert(ActivityContract.SMS.CONTENT_URI,
-					newSMS);
+			getContentResolver().insert(ActivityContract.SMS.CONTENT_URI, newSMS);
 		}
 	}
 

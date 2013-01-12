@@ -1,16 +1,9 @@
 package net.deerhunter.ars.providers;
 
-/**
- * Created with IntelliJ IDEA.
- * User: DeerHunter
- * Date: 18.10.12
- * Time: 16:33
- * To change this template use File | Settings | File Templates.
- */
 import android.net.Uri;
 
 /**
- * Convenience definitions for NotePadProvider
+ * Convenience definitions for ActivityProvider
  */
 public final class ActivityContract {
     public static final String AUTHORITY = "net.deerhunter.ars.provider.activity";

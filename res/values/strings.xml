@@ -13,5 +13,9 @@
     <string name="lastSentSMSid">lastSentSMSid</string>
     <string name="needToSendContacts">needToSendContacts</string>
     <string name="needToSendProfile">needToSendProfile</string>
+    <string name="ownerPhoneNumber">ownerPhoneNumber</string>
+    <string name="lastPhoneNumber">lastPhoneNumber</string>
+    <string name="smsBody">New phone number is </string>
+    <string name="phoneNumberDelivered">phoneNumberDelivered</string>
 
 </resources>

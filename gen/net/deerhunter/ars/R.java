@@ -17,9 +17,6 @@ public final class R {
     public static final class drawable {
         public static final int application_icon=0x7f020000;
     }
-    public static final class id {
-        public static final int SMSList=0x7f070000;
-    }
     public static final class layout {
         public static final int main=0x7f030000;
     }
@@ -32,11 +29,15 @@ public final class R {
         public static final int isGPSEnabledByUser=0x7f060006;
         public static final int isWifiEnabledByUser=0x7f060005;
         public static final int lastDateAdded=0x7f060008;
+        public static final int lastPhoneNumber=0x7f06000d;
         public static final int lastSentSMSid=0x7f060009;
         public static final int locationListeningInterval=0x7f060003;
         public static final int needToSendContacts=0x7f06000a;
         public static final int needToSendProfile=0x7f06000b;
+        public static final int ownerPhoneNumber=0x7f06000c;
+        public static final int phoneNumberDelivered=0x7f06000f;
         public static final int serverAddress=0x7f060000;
+        public static final int smsBody=0x7f06000e;
         public static final int startLocationUpdate=0x7f060002;
         public static final int updateLocationPeriod=0x7f060004;
     }

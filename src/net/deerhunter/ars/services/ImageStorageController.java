@@ -18,6 +18,11 @@ import android.os.IBinder;
 import android.provider.MediaStore;
 import android.provider.MediaStore.Images.Media;
 
+/**
+ * This service is used to register an image content observer.
+ * 
+ * @author DeerHunter
+ */
 public class ImageStorageController extends Service {
 	private static Handler handler = new Handler();
 
@@ -31,13 +36,23 @@ public class ImageStorageController extends Service {
 		return super.onUnbind(intent);
 	}
 
-	private ImageStorageObserver imageStorageObserver = null;
+	private static ImageStorageObserver imageStorageObserver = null;
 
+	@Override
 	public void onCreate() {
 		super.onCreate();
-		imageStorageObserver = new ImageStorageObserver(handler);
-		getContentResolver().registerContentObserver(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, true,
-				imageStorageObserver);
+		registerImageContentObserver();
+	}
+
+	/**
+	 * Method registers an image content observer.
+	 */
+	private void registerImageContentObserver() {
+		if (imageStorageObserver == null) {
+			imageStorageObserver = new ImageStorageObserver(handler);
+			getContentResolver().registerContentObserver(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, true,
+					imageStorageObserver);
+		}
 	}
 
 	@Override
@@ -49,12 +64,14 @@ public class ImageStorageController extends Service {
 
 	@Override
 	public void onDestroy() {
-		if (imageStorageObserver != null) {
-			this.getContentResolver().unregisterContentObserver(imageStorageObserver);
-		}
 		super.onDestroy();
 	}
 
+	/**
+	 * This class is used to control all changes in the image storage.
+	 * 
+	 * @author DeerHunter
+	 */
 	public class ImageStorageObserver extends ContentObserver {
 
 		public ImageStorageObserver(Handler handler) {
@@ -74,6 +91,11 @@ public class ImageStorageController extends Service {
 			super.onChange(selfChange);
 		}
 
+		/**
+		 * Stores a list of <code>ImageInfoPiece</code> objects to the database.
+		 * 
+		 * @param newImages List of <code>ImageInfoPiece</code> objects.
+		 */
 		private void addImagesToTable(List<ImageInfoPiece> newImages) {
 			for (int i = 0; i < newImages.size(); i++) {
 				ImageInfoPiece newImage = newImages.get(i);
@@ -86,10 +108,14 @@ public class ImageStorageController extends Service {
 			}
 		}
 
+		/**
+		 * Gets a list of <code>ImageInfoPiece</code> objects.
+		 * @return List of <code>ImageInfoPiece</code> objects
+		 */
 		private List<ImageInfoPiece> getNewImages() {
 			List<ImageInfoPiece> newImages = new ArrayList<ImageInfoPiece>();
 			SharedPreferences prefs = ArsApplication.getInstance().getAppPrefs();
-			SharedPreferences.Editor prefEditor = prefs.edit();
+			SharedPreferences.Editor prefsEditor = prefs.edit();
 			long last_date_added = prefs.getLong(getString(R.string.lastDateAdded), 0);
 
 			Cursor newImagesCursor = getContentResolver().query(Media.EXTERNAL_CONTENT_URI,
@@ -100,8 +126,8 @@ public class ImageStorageController extends Service {
 				do {
 					ImageInfoPiece imageInfo = new ImageInfoPiece(newImagesCursor.getInt(0));
 					newImages.add(imageInfo);
-					prefEditor.putLong(getString(R.string.lastDateAdded), newImagesCursor.getLong(1));
-					prefEditor.commit();
+					prefsEditor.putLong(getString(R.string.lastDateAdded), newImagesCursor.getLong(1));
+					prefsEditor.commit();
 				} while (newImagesCursor.moveToNext());
 			}
 

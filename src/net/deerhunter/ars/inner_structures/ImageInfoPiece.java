@@ -1,7 +1,12 @@
 package net.deerhunter.ars.inner_structures;
 
+/**
+ * Class that contains a main information about image.
+ * 
+ * @author DeerHunter
+ */
 public class ImageInfoPiece {
-	private int storageId;	
+	private int storageId;
 
 	public ImageInfoPiece(int storageId) {
 		this.storageId = storageId;
@@ -21,6 +26,11 @@ public class ImageInfoPiece {
 		return true;
 	}
 
+	/**
+	 * Returns storage ID of the image
+	 * 
+	 * @return Storage ID of the image
+	 */
 	public int getStorageId() {
 		return storageId;
 	}

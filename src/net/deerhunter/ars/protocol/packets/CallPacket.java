@@ -7,11 +7,10 @@ import java.nio.charset.Charset;
 import java.util.Date;
 
 /**
- * Created with IntelliJ IDEA.
- * User: DeerHunter
- * Date: 21.10.12
- * Time: 0:02
- * To change this template use File | Settings | File Templates.
+ * This class contains all the information and methods needed to send the information about the calls
+ * to the server.
+ * 
+ * @author DeerHunter
  */
 public class CallPacket extends BasePacket{
     private String caller;
@@ -23,11 +22,11 @@ public class CallPacket extends BasePacket{
 
     /**
      * Constructs a new CallPacket using all necessary parameters.
-     * @param caller  caller
-     * @param recipient  recipient of the call
-     * @param callerPhoneNumber  phone number of a caller
-     * @param recipientPhoneNumber  phone number of a recipient
-     * @param time  call's incoming or outgoing time
+     * @param caller Caller
+     * @param recipient Recipient of the call
+     * @param callerPhoneNumber Phone number of a caller
+     * @param recipientPhoneNumber Phone number of a recipient
+     * @param time Time of the incoming or outgoing call
      */
     public CallPacket(String caller, String recipient, String callerPhoneNumber, String recipientPhoneNumber,long time){
         this.caller = caller;
@@ -39,7 +38,7 @@ public class CallPacket extends BasePacket{
     }
 
     /**
-     * Method generate a binary representation of a SMS packet
+     * Method generate a binary representation of a Call packet.
      */
     private void generateBinaryPacket(){
         ByteArrayOutputStream outputArray = new ByteArrayOutputStream(300);
@@ -63,32 +62,32 @@ public class CallPacket extends BasePacket{
     }
 
     /**
-     * Method returns a caller name
-     * @return  caller
+     * Method returns a caller name.
+     * @return Caller name
      */
     public String getCaller(){
         return caller;
     }
 
     /**
-     * Method returns a recipient of this call
-     * @return  recipient of the call
+     * Method returns a recipient of this call.
+     * @return Recipient of the call
      */
     public String getRecipient(){
         return recipient;
     }
 
     /**
-     * Method returns a phone number of a caller
-     * @return  phone number of a caller
+     * Method returns a phone number of a caller.
+     * @return Phone number of a caller
      */
     public String getCallerPhoneNumber(){
         return callerPhoneNumber;
     }
 
     /**
-     * Method returns a phone number of a recipient
-     * @return  phone number of a recipient
+     * Method returns a phone number of a recipient.
+     * @return Phone number of a recipient
      */
     public String getRecipientPhoneNumber(){
         return recipientPhoneNumber;
@@ -96,16 +95,16 @@ public class CallPacket extends BasePacket{
 
 
     /**
-     * Method returns a time when this call was made
-     * @return  time when the call was made
+     * Method returns a time when this call was made.
+     * @return Time when the call was made
      */
     public long getTime(){
         return time;
     }
 
     /**
-     * Method returns a binary representation of a CallPacket
-     * @return  binary representation of a CallPacket
+     * Method returns a binary representation of a CallPacket.
+     * @return Binary representation of a CallPacket
      */
     public byte[] getBinaryPacket(){
         return binaryPacket;

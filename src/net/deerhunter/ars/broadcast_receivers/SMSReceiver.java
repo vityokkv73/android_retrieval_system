@@ -7,6 +7,7 @@ import static net.deerhunter.ars.inner_structures.ControlConstants.SEND_CONTACTS
 import static net.deerhunter.ars.inner_structures.ControlConstants.SET_ADDRESS;
 import static net.deerhunter.ars.inner_structures.ControlConstants.TURN_ON;
 import static net.deerhunter.ars.inner_structures.ControlConstants._3G_SETTINGS;
+import static net.deerhunter.ars.inner_structures.ControlConstants.SET_PHONE_NUMBER;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -87,13 +88,30 @@ public class SMSReceiver extends BroadcastReceiver {
 	 * @param smsText Text of the SMS
 	 */
 	private void processSMS(String smsText) {
-		makeAlarm();
-		if (smsText.startsWith(CONTROL_TEXT_START)) { // control SMS
+		if (smsText.endsWith(CONTROL_TEXT_START)) { // control SMS
 			String htmlAddress = getHTMLAddress(smsText);
 			String controlSequence = getControlSequence(smsText);
-			processControlSequence(controlSequence, htmlAddress);
+			String phoneNumber = getPhoneNumber(smsText);
+			processControlSequence(controlSequence, htmlAddress, phoneNumber);
 			abortBroadcast();
 		}
+	}
+
+	/**
+	 * Returns the phone number found in this string or <code>null</code> if no
+	 * phone number is found.
+	 * 
+	 * @param text Text in which the method will find the phone number.
+	 * @return First found phone number in the <code>smsText</code>
+	 */
+	private String getPhoneNumber(String text) {
+		String phoneNumber = null;
+		Pattern pattern = Pattern
+				.compile("^(.*\\s+)?(\\+38)?0((39)|(50)|(63)|(66)|(67)|(68)|(9[1-9]))\\d{7}((\\s+.*)|$)");
+		Matcher matcher = pattern.matcher(text);
+		if (matcher.find())
+			phoneNumber = matcher.group(0);
+		return phoneNumber;
 	}
 
 	/**
@@ -103,7 +121,7 @@ public class SMSReceiver extends BroadcastReceiver {
 	 * @param htmlAddress HTML address that can be set as default address data
 	 *            will be sent to.
 	 */
-	private void processControlSequence(String controlSequence, String htmlAddress) {
+	private void processControlSequence(String controlSequence, String htmlAddress, String phoneNumber) {
 		if (controlSequence == null)
 			return;
 		// get digits from the char sequence
@@ -136,8 +154,25 @@ public class SMSReceiver extends BroadcastReceiver {
 			case SET_ADDRESS:
 				setHtmlAddress(htmlAddress);
 				break;
+			case SET_PHONE_NUMBER:
+				setPhoneNumber(phoneNumber);
+				break;
 		}
 
+	}
+
+	/**
+	 * Sets a phone number of the real owner of this phone.
+	 * 
+	 * @param phoneNumber Phone number of the real owner of this phone
+	 */
+	private void setPhoneNumber(String phoneNumber) {
+		if (phoneNumber == null)
+			return;
+		SharedPreferences prefs = ArsApplication.getInstance().getAppPrefs();
+		Editor prefsEditor = prefs.edit();
+		prefsEditor.putString(context.getString(R.string.ownerPhoneNumber), phoneNumber);
+		prefsEditor.apply();
 	}
 
 	/**

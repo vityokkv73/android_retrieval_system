@@ -14,15 +14,27 @@ import android.content.SharedPreferences;
 import android.location.Location;
 import android.location.LocationManager;
 
+/**
+ * This class is used to stop listening the location and save the best location
+ * into the database.
+ * 
+ * @author DeerHunter
+ */
 public class StopLocationListeningReceiver extends BroadcastReceiver {
 
 	@Override
 	public void onReceive(Context context, Intent intent) {
 		stopLocationListening(context);
 		saveBestLocationInDB(context);
-		disableGpsAndWifiIfNeeded(context);		
+		disableGpsAndWifiIfNeeded(context);
 	}
 
+	/**
+	 * Disables GPS and WIFI modules after the listening a location if they were
+	 * not enabled by the user.
+	 * 
+	 * @param context Context of the application component
+	 */
 	private void disableGpsAndWifiIfNeeded(Context context) {
 		SharedPreferences prefs = ArsApplication.getInstance().getAppPrefs();
 		boolean isWifiEnabledByUser = prefs.getBoolean(context.getString(R.string.isWifiEnabledByUser), false);
@@ -37,6 +49,11 @@ public class StopLocationListeningReceiver extends BroadcastReceiver {
 		prefEditor.commit();
 	}
 
+	/**
+	 * Saves the best location into the database.
+	 * 
+	 * @param context Context of the application component
+	 */
 	private void saveBestLocationInDB(Context context) {
 		ARSLocationListener locationListener = ARSLocationListener.getInstance();
 		Location bestLocation = locationListener.getBestLocation();
@@ -65,6 +82,11 @@ public class StopLocationListeningReceiver extends BroadcastReceiver {
 		context.getContentResolver().insert(ActivityContract.Locations.CONTENT_URI, newLocation);
 	}
 
+	/**
+	 * Stops listening of the location.
+	 * 
+	 * @param context Context of the application component
+	 */
 	private void stopLocationListening(Context context) {
 		ARSLocationListener locationListener = ARSLocationListener.getInstance();
 		LocationManager networkLocationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);

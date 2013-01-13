@@ -17,8 +17,9 @@ import android.os.IBinder;
 import android.telephony.TelephonyManager;
 
 /**
- * Created with IntelliJ IDEA. User: DeerHunter Date: 21.10.12 Time: 14:27 To
- * change this template use File | Settings | File Templates.
+ * This service class is used to control sent SMSes and save them into database.
+ * 
+ * @author DeerHunter
  */
 public class SentSMSControllerService extends Service {
 	private static Handler handler = new Handler();
@@ -37,6 +38,7 @@ public class SentSMSControllerService extends Service {
 
 	public void onCreate() {
 		super.onCreate();
+		// create and register the observer to all sent SMSes
 		sentSMSObserver = new SentSMSObserver(handler);
 		this.getContentResolver().registerContentObserver(Uri.parse("content://sms/sent"), true, sentSMSObserver);
 	}
@@ -46,7 +48,6 @@ public class SentSMSControllerService extends Service {
 		super.onStartCommand(intent, flags, startId);
 
 		return Service.START_STICKY;
-
 	}
 
 	@Override
@@ -55,9 +56,13 @@ public class SentSMSControllerService extends Service {
 			this.getContentResolver().unregisterContentObserver(sentSMSObserver);
 		}
 		super.onDestroy();
-
 	}
 
+	/**
+	 * Observer is used to listen all sent SMSes.
+	 * 
+	 * @author DeerHunter
+	 */
 	public class SentSMSObserver extends ContentObserver {
 		public SentSMSObserver(Handler handler) {
 			super(handler);
@@ -70,9 +75,18 @@ public class SentSMSControllerService extends Service {
 
 		@Override
 		public void onChange(boolean selfChange) {
+			saveSmsAndID();
+
+			super.onChange(selfChange);
+		}
+
+		/**
+		 * Method saves new sent SMSes into the database and update last SMS id.
+		 */
+		private void saveSmsAndID() {
 			SharedPreferences prefs = ArsApplication.getInstance().getAppPrefs();
 			int lastSentSMSid = prefs.getInt(getString(R.string.lastSentSMSid), 0);
-			SharedPreferences.Editor prefEditor = prefs.edit();
+			SharedPreferences.Editor prefsEditor = prefs.edit();
 
 			Uri sentSMSUri = Uri.parse("content://sms/sent");
 
@@ -83,15 +97,17 @@ public class SentSMSControllerService extends Service {
 
 				do {
 					putSMSIntoDB(cursor);
-					prefEditor.putInt(getString(R.string.lastSentSMSid), cursor.getInt(cursor.getColumnIndex("_id")));
-					prefEditor.commit();
+					prefsEditor.putInt(getString(R.string.lastSentSMSid), cursor.getInt(cursor.getColumnIndex("_id")));
+					prefsEditor.commit();
 				} while (cursor.moveToNext());
 			}
-
-			super.onChange(selfChange);
-
 		}
 
+		/**
+		 * Method saves new sent SMSes into the database.
+		 * 
+		 * @param cursor Cursor of the sent SMSes
+		 */
 		private void putSMSIntoDB(Cursor cursor) {
 			TelephonyManager tMgr = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
 			String myPhoneNumber = tMgr.getLine1Number();

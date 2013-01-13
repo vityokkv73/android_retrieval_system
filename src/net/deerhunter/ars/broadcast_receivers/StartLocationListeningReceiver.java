@@ -11,6 +11,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.LocationManager;
 
+/**
+ * This class is used to start listening the location.
+ * 
+ * @author DeerHunter
+ */
 public class StartLocationListeningReceiver extends BroadcastReceiver {
 	@Override
 	public void onReceive(Context context, Intent intent) {
@@ -32,6 +37,10 @@ public class StartLocationListeningReceiver extends BroadcastReceiver {
 		startLocationListening(context);
 	}
 
+	/**
+	 * Starts listening of location.
+	 * @param context Context of the application component
+	 */
 	private void startLocationListening(Context context) {
 		ARSLocationListener locationListener = ARSLocationListener.getInstance();
 		LocationManager networkLocationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);

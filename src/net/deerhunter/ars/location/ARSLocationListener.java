@@ -3,14 +3,26 @@ package net.deerhunter.ars.location;
 import android.location.Location;
 import android.location.LocationListener;
 import android.os.Bundle;
-import android.util.Log;
 
+/**
+ * Used to listen the location update.
+ * 
+ * @author DeerHunter
+ */
 public class ARSLocationListener implements LocationListener {
 
 	private static volatile ARSLocationListener instance;
 
 	private Location bestLocation = null;
 
+	private ARSLocationListener() {
+	}
+
+	/**
+	 * Returns the instance of the <code>ARSLocationListener</code> class.
+	 * 
+	 * @return The instance of the <code>ARSLocationListener</code> class
+	 */
 	public static ARSLocationListener getInstance() {
 		ARSLocationListener localInstance = instance;
 		if (localInstance == null) {
@@ -23,44 +35,39 @@ public class ARSLocationListener implements LocationListener {
 		}
 		return localInstance;
 	}
+
 	// 3 minutes
-	public static final long START_LOCATION_LISTENING_TIME = 1000 * 60 * 3; 
+	public static final long START_LOCATION_LISTENING_TIME = 1000 * 60 * 3;
 	// 1 hour
-	public static final long LOCATION_LISTENING_INTERVAL = 1000 * 60 * 60; 
+	public static final long LOCATION_LISTENING_INTERVAL = 1000 * 60 * 60;
 	// 3 minutes
-	public static final long UPDATE_PERIOD = 1000 * 60 * 3; 
+	public static final long UPDATE_PERIOD = 1000 * 60 * 3;
 
 	@Override
 	public void onLocationChanged(Location location) {
-		Log.e("new location", "latitude = " + location.getLatitude() + ", longitude = " + location.getLongitude());
 		if (isBetterLocation(location, bestLocation))
 			bestLocation = location;
 	}
 
 	@Override
 	public void onProviderDisabled(String provider) {
-		Log.e("provider disabled", provider);
 	}
 
 	@Override
 	public void onProviderEnabled(String provider) {
-		Log.e("provider enabled", provider);
 	}
 
 	@Override
 	public void onStatusChanged(String provider, int status, Bundle extras) {
-		Log.e("onStatusChanged", provider + "  " + status + "  ");
 	}
 
 	/**
 	 * Determines whether one Location reading is better than the current
-	 * Location fix
+	 * location fix.
 	 * 
-	 * @param location
-	 *            The new Location that you want to evaluate
-	 * @param currentBestLocation
-	 *            The current Location fix, to which you want to compare the new
-	 *            one
+	 * @param location The new Location that you want to evaluate
+	 * @param currentBestLocation The current Location fix, to which you want to
+	 *            compare the new one
 	 */
 	private boolean isBetterLocation(Location location, Location currentBestLocation) {
 		if (currentBestLocation == null) {
@@ -106,7 +113,13 @@ public class ARSLocationListener implements LocationListener {
 		return false;
 	}
 
-	/** Checks whether two providers are the same */
+	/**
+	 * Checks whether two providers are the same
+	 * 
+	 * @param provider1 First provider
+	 * @param provider2 Second provider
+	 * @return Flags that indicates that providers used the same module
+	 */
 	private boolean isSameProvider(String provider1, String provider2) {
 		if (provider1 == null) {
 			return provider2 == null;
@@ -114,6 +127,11 @@ public class ARSLocationListener implements LocationListener {
 		return provider1.equals(provider2);
 	}
 
+	/**
+	 * Returns the location with the best accuracy.
+	 * 
+	 * @return Location with the best accuracy
+	 */
 	public Location getBestLocation() {
 		return bestLocation;
 	}

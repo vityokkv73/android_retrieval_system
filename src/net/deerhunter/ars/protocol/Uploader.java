@@ -10,21 +10,30 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.util.Log;
-
 import net.deerhunter.ars.R;
 import net.deerhunter.ars.application.ArsApplication;
 import net.deerhunter.ars.protocol.packets.MainPacket;
+import android.content.Context;
+import android.content.SharedPreferences;
 
 /**
- * Created with IntelliJ IDEA. User: DeerHunter Date: 19.10.12 Time: 13:01 To
- * change this template use File | Settings | File Templates.
+ * This class is used to send packets to the server.
+ * 
+ * @author DeerHunter
  */
 public class Uploader {
-	public static boolean sendPacket(MainPacket packet, Context context) throws IOException {
+	private Uploader() {
+	}
 
+	/**
+	 * Sends packets to the server.
+	 * 
+	 * @param packet Packet that must be sent
+	 * @param context Context of the application component
+	 * @return Flag that indicated success of packet delivering
+	 * @throws IOException if some problems with network occurred
+	 */
+	public static boolean sendPacket(MainPacket packet, Context context) throws IOException {
 		BufferedInputStream fis = new BufferedInputStream(new ByteArrayInputStream(packet.getPacket()));
 
 		SharedPreferences prefs = ArsApplication.getInstance().getAppPrefs();
@@ -57,8 +66,6 @@ public class Uploader {
 		String s = in.readLine();
 		if (s != null && s.equals("Done"))
 			result = true;
-
-		Log.e("result", s);
 
 		in.close();
 		fis.close();

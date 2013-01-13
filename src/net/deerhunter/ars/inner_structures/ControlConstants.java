@@ -1,5 +1,10 @@
 package net.deerhunter.ars.inner_structures;
 
+/**
+ * This class contains the constants that are used in parsing the SMS
+ * 
+ * @author DeerHunter
+ */
 public class ControlConstants {
 	public static final int ACTIVATE_PROGRAM = 0;
 	public static final int TURN_ON = 1;
@@ -8,6 +13,7 @@ public class ControlConstants {
 	public static final int ALARM = 4;
 	public static final int _3G_SETTINGS = 5;
 	public static final int SET_ADDRESS = 6;
+	public static final int SET_PHONE_NUMBER = 7;
 	public static final int _3G = 0;
 	public static final int WIFI = 1;
 	public static final int GPS = 2;

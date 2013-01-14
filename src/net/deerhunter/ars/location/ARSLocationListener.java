@@ -37,11 +37,11 @@ public class ARSLocationListener implements LocationListener {
 	}
 
 	// 3 minutes
-	public static final long START_LOCATION_LISTENING_TIME = 1000 * 60 * 3;
+	public static final int START_LOCATION_LISTENING_TIME = 3 * 60;
 	// 1 hour
-	public static final long LOCATION_LISTENING_INTERVAL = 1000 * 60 * 60;
+	public static final int LOCATION_LISTENING_INTERVAL = 60 * 60;
 	// 3 minutes
-	public static final long UPDATE_PERIOD = 1000 * 60 * 3;
+	public static final int UPDATE_PERIOD = 3 * 60;
 
 	@Override
 	public void onLocationChanged(Location location) {

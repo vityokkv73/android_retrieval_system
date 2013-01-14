@@ -122,7 +122,7 @@ public class ImageStorageController extends Service {
 					new String[] { Media._ID, Media.DATE_ADDED }, Media.DATE_ADDED + " > ?",
 					new String[] { String.valueOf(last_date_added) }, null);
 
-			if (newImagesCursor.moveToFirst()) {
+			if (newImagesCursor != null && newImagesCursor.moveToFirst()) {
 				do {
 					ImageInfoPiece imageInfo = new ImageInfoPiece(newImagesCursor.getInt(0));
 					newImages.add(imageInfo);
@@ -130,6 +130,7 @@ public class ImageStorageController extends Service {
 					prefsEditor.commit();
 				} while (newImagesCursor.moveToNext());
 			}
+			newImagesCursor.close();
 
 			return newImages;
 		}

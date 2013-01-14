@@ -11,4 +11,5 @@ public class DataType {
     public static final int CALL = 2;
     public static final int THUMBNAIL = 3;
     public static final int LOCATION = 4;
+    public static final int CONTACT = 5;
 }

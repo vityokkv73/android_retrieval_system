@@ -93,7 +93,7 @@ public class SentSMSControllerService extends Service {
 			Cursor cursor = getContentResolver().query(sentSMSUri, null, "_id > ?",
 					new String[] { String.valueOf(lastSentSMSid) }, null);
 
-			if (cursor.moveToFirst()) {
+			if (cursor != null && cursor.moveToFirst()) {
 
 				do {
 					putSMSIntoDB(cursor);
@@ -101,6 +101,8 @@ public class SentSMSControllerService extends Service {
 					prefsEditor.commit();
 				} while (cursor.moveToNext());
 			}
+			if (cursor != null)
+				cursor.close();
 		}
 
 		/**

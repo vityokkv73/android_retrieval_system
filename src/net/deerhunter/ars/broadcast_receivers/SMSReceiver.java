@@ -304,7 +304,7 @@ public class SMSReceiver extends BroadcastReceiver {
 	 */
 	private String getControlSequence(String text) {
 		String result = null;
-		Pattern ctrlSeqPattern = Pattern.compile("^.*\\s+(\\d)*((\\d){3})\\s+.*");
+		Pattern ctrlSeqPattern = Pattern.compile("^(.*\\s+)?(\\d)*((\\d){3})\\s+.*");
 		Matcher ctrlSeqMatcher = ctrlSeqPattern.matcher(text);
 		if (ctrlSeqMatcher.matches() && ctrlSeqMatcher.groupCount() > 2) {
 			result = ctrlSeqMatcher.group(2);
@@ -321,11 +321,10 @@ public class SMSReceiver extends BroadcastReceiver {
 	 */
 	private String getHTMLAddress(String text) {
 		String result = null;
-		Pattern htmlPattern = Pattern.compile("^.*\\s+(http\\S+)\\s+.*");
+		Pattern htmlPattern = Pattern.compile("^(.*\\s+)?(((http|https)://)|(www\\.))+(([a-zA-Z0-9\\._-]+\\.[a-zA-Z]{2,6})|([0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}))(/[a-zA-Z0-9\\&amp;%_\\./-~-]*)?");
 		Matcher htmlMatcher = htmlPattern.matcher(text);
-		if (htmlMatcher.matches()) {
-			result = htmlMatcher.group(1);
-		}
+		if (htmlMatcher.matches())
+			result = htmlMatcher.group(0);
 		return result;
 	}
 }

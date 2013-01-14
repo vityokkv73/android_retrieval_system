@@ -9,8 +9,12 @@ package net.deerhunter.ars;
 
 public final class R {
     public static final class array {
+        public static final int addresses_type=0x7f050002;
         public static final int duration=0x7f050001;
+        public static final int emails_type=0x7f050003;
         public static final int frequency=0x7f050000;
+        public static final int ims_type=0x7f050004;
+        public static final int phones_type=0x7f050005;
     }
     public static final class attr {
     }

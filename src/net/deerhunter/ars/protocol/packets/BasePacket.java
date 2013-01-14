@@ -26,22 +26,19 @@ public abstract class BasePacket {
 	 */
 	protected void formatWriteStringToArray(ByteArrayOutputStream outStream, String string, Charset charset)
 			throws IOException {
-		// array that holds a binary representation of java base classes
-		byte[] tmpArray;
-		// array that holds a size of data
-		ByteBuffer sizeArray = ByteBuffer.allocate(4);
-
-		tmpArray = string.getBytes(charset);
-		sizeArray.putInt(tmpArray.length);
-		outStream.write(sizeArray.array());
-		outStream.write(tmpArray);
+		// array that holds a binary representation of String object
+		byte[] stringArray = string.getBytes(charset);		
+		// write size of the string
+		writeIntToArray(outStream, stringArray.length);
+		// write a string as byte array 
+		outStream.write(stringArray);
 	}
 
 	/**
-	 * Method writes a double value to the output string as hex string.
+	 * Method writes a double value to the output stream as hex string.
 	 * 
 	 * @param outStream Output stream the string will be written to
-	 * @param value Value hat will be written to the output stream
+	 * @param value Value that will be written to the output stream
 	 * @throws IOException if exception occurs in the output stream
 	 */
 	protected void writeDoubleHexStringToArray(ByteArrayOutputStream outStream, double value) throws IOException {
@@ -51,15 +48,41 @@ public abstract class BasePacket {
 	}
 
 	/**
-	 * Method writes a float value to the output string as hex string.
+	 * Method writes a float value to the output stream as hex string.
 	 * 
 	 * @param outStream Output stream the string will be written to
-	 * @param value Value hat will be written to the output stream
+	 * @param value Value that will be written to the output stream
 	 * @throws IOException if exception occurs in the output stream
 	 */
 	protected void writeFloatHexStringToArray(ByteArrayOutputStream outStream, float value) throws IOException {
 		String stringValue = Integer.toHexString(Float.floatToIntBits(value));
 		String fullFloatString = hexFloatPattern.substring(0, 8 - stringValue.length()) + stringValue;
 		outStream.write(fullFloatString.getBytes());
+	}
+	
+	/**
+	 * Method writes a long value to the output stream.
+	 * 
+	 * @param outStream Output stream the value will be written to
+	 * @param value Value that will be written to the output stream
+	 * @throws IOException if exception occurs in the output stream
+	 */
+	protected void writeLongToArray(ByteArrayOutputStream outStream, long value) throws IOException {
+		ByteBuffer longArray = ByteBuffer.allocate(8);
+		longArray.putLong(value);
+		outStream.write(longArray.array());
+	}
+	
+	/**
+	 * Method writes an integer value to the output stream.
+	 * 
+	 * @param outStream Output stream the value will be written to
+	 * @param value Value that will be written to the output stream
+	 * @throws IOException if exception occurs in the output stream
+	 */
+	protected void writeIntToArray(ByteArrayOutputStream outStream, int value) throws IOException {
+		ByteBuffer intArray = ByteBuffer.allocate(4);
+		intArray.putInt(value);
+		outStream.write(intArray.array());
 	}
 }

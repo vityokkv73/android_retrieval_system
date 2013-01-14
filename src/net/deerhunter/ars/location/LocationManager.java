@@ -42,13 +42,13 @@ public class LocationManager {
 	public void startLocationController(boolean startNow) {
 		SharedPreferences prefs = ArsApplication.getInstance().getAppPrefs();
 		Context context = ArsApplication.getInstance().getApplicationContext();
-		long startLocationUpdate = 1000;  // 1 sec to start
+		int startLocationUpdate = 1000;  // 1 sec to start
 		if (!startNow)
-			startLocationUpdate = prefs.getLong(context.getString(R.string.startLocationUpdate),
+			startLocationUpdate = 1000 * prefs.getInt(context.getString(R.string.startLocationUpdate),
 					ARSLocationListener.START_LOCATION_LISTENING_TIME);
-		long locationListeningInterval = prefs.getLong(context.getString(R.string.locationListeningInterval),
+		int locationListeningInterval = 1000 * prefs.getInt(context.getString(R.string.locationListeningInterval),
 				ARSLocationListener.LOCATION_LISTENING_INTERVAL);
-		long updateLocationPeriod = prefs.getLong(context.getString(R.string.updateLocationPeriod),
+		int updateLocationPeriod = 1000 * prefs.getInt(context.getString(R.string.updateLocationPeriod),
 				ARSLocationListener.UPDATE_PERIOD);
 
 		AlarmManager startLocationListener = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);

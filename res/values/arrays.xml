@@ -2,28 +2,71 @@
 <resources>
 
     <integer-array name="frequency">
-        <item>20</item>
-        <item>30</item>
-        <item>40</item>
+        <item>1200</item>
+        <item>1800</item>
+        <item>2400</item>
+        <item>3600</item>
+        <item>7200</item>
+        <item>10800</item>
+        <item>14400</item>
+        <item>18000</item>
+        <item>43200</item>
+        <item>86400</item>
+    </integer-array>
+    <integer-array name="duration">
+        <item>0</item>
         <item>60</item>
         <item>120</item>
         <item>180</item>
         <item>240</item>
         <item>300</item>
-        <item>720</item>
-        <item>1440</item>
+        <item>360</item>
+        <item>600</item>
+        <item>1200</item>
+        <item>1800</item>
     </integer-array>
-    <integer-array name="duration">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-        <item>4</item>
-        <item>5</item>
-        <item>6</item>
-        <item>10</item>
-        <item>20</item>
-        <item>30</item>
-    </integer-array>
+
+    <string-array name="addresses_type">
+        <item>unknown type of address</item>
+        <item>home address</item>
+        <item>work address</item>
+        <item>other address</item>
+    </string-array>
+    <string-array name="emails_type">
+        <item>unknown type of email address</item>
+        <item>home email address</item>
+        <item>work email address</item>
+        <item>other email address</item>
+        <item>mobile email address</item>
+    </string-array>
+    <string-array name="ims_type">
+        <item>unknown type of IM</item>
+        <item>home IM</item>
+        <item>work IM</item>
+        <item>other IM</item>
+    </string-array>
+    <string-array name="phones_type">
+        <item>unknown type of phone</item>
+        <item>home phone</item>
+        <item>mobile phone</item>
+        <item>work phone</item>
+        <item>work fax</item>
+        <item>home fax</item>
+        <item>pager</item>
+        <item>other type of phone</item>
+        <item>callback phone</item>
+        <item>car phone</item>
+        <item>company main phone</item>
+        <item>ISDN phone</item>
+        <item>main phone</item>
+        <item>other type of fax</item>
+        <item>radio phone</item>
+        <item>telex</item>
+        <item>TTY_TDD</item>
+        <item>mobile work phone</item>
+        <item>work pager</item>
+        <item>assistant phone</item>
+        <item>MMS</item>
+    </string-array>
 
 </resources>

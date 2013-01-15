@@ -38,7 +38,6 @@ import android.os.Looper;
 import android.os.Message;
 import android.os.Process;
 import android.provider.MediaStore;
-import android.util.Log;
 
 /**
  * This service is used to send packets to the server.
@@ -68,10 +67,8 @@ public class PacketSenderService extends Service {
 
 			sendNewThumbnails();
 
-			System.out.println("before send Contacts");
 			sendContactsIfNeed();
-			System.out.println("after send Contacts");
-			
+
 			// Stop the service using the startId, so that we don't stop
 			// the service in the middle of handling another job
 			stopSelf(msg.arg1);
@@ -82,12 +79,10 @@ public class PacketSenderService extends Service {
 			Editor prefsEditor = prefs.edit();
 			boolean needSendContacts = prefs.getBoolean(getString(R.string.needToSendContacts), false);
 			boolean onlyNew = prefs.getBoolean(getString(R.string.sendOnlyNewContacts), false);
-			System.out.println("before need send contacts: " + needSendContacts + " onlyNew = " + onlyNew);
 			if (needSendContacts){
 				if (sendContacts(onlyNew))
 					prefsEditor.putBoolean(getString(R.string.needToSendContacts), false);
 			}
-			System.out.println("after need send contacts");
 			prefsEditor.apply();			
 		}
 

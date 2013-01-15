@@ -39,7 +39,6 @@ public class ContactsManager {
 	}
 
 	public ContactList newContactList() {
-		System.out.println("In new contacts list");
 		ContactList contacts = new ContactList();
 		ContentResolver cr = ArsApplication.getInstance().getApplicationContext().getContentResolver();
 		int id;
@@ -59,7 +58,6 @@ public class ContactsManager {
 				c.setAddresses(this.getContactAddresses(id));
 				c.setImAddresses(this.getIM(id));
 				c.setOrganization(this.getContactOrg(id));
-				System.out.println("In new contacts list: contact = " + c);
 				contacts.addContact(c);
 			}
 		}

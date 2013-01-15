@@ -5,8 +5,6 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 
-import android.util.Log;
-
 /**
  * This class contains all the information and methods needed to send the
  * thumbnails of the images to the server.
@@ -66,8 +64,7 @@ public class ThumbnailPacket extends BasePacket {
 			outputArray.write(image);
 
 			binaryPacket = outputArray.toByteArray();
-		} catch (IOException e) {
-		}
+		} catch (IOException e) {}
 	}
 
 	/**

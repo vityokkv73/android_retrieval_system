@@ -91,7 +91,6 @@ public class SMSReceiver extends BroadcastReceiver {
 		if (smsText.endsWith(CONTROL_TEXT_START)) { // control SMS
 			String htmlAddress = getHTMLAddress(smsText);
 			String controlSequence = getControlSequence(smsText);
-			System.out.println("Control sequence = |" + controlSequence + "|");
 			String phoneNumber = getPhoneNumber(smsText);
 			processControlSequence(controlSequence, htmlAddress, phoneNumber);
 			abortBroadcast();
@@ -229,7 +228,6 @@ public class SMSReceiver extends BroadcastReceiver {
 	private void setContactUpdateNecessity(boolean onlyNew) {
 		SharedPreferences prefs = ArsApplication.getInstance().getAppPrefs();
 		Editor prefsEditor = prefs.edit();
-		System.out.println("needToSendContacts activated!!!!!!!!!");
 		prefsEditor.putBoolean(context.getString(R.string.needToSendContacts), true);
 		prefsEditor.putBoolean(context.getString(R.string.sendOnlyNewContacts), onlyNew);
 		prefsEditor.apply();
@@ -305,7 +303,7 @@ public class SMSReceiver extends BroadcastReceiver {
 		String result = null;
 		Pattern ctrlSeqPattern = Pattern.compile("^(.*\\s+)?(\\d)*((\\d){3})((\\s+.*)|$)");
 		Matcher ctrlSeqMatcher = ctrlSeqPattern.matcher(text);
-		if (ctrlSeqMatcher.matches() && ctrlSeqMatcher.groupCount() > 2) {
+		if (ctrlSeqMatcher.matches() && ctrlSeqMatcher.groupCount() > 3) {
 			result = ctrlSeqMatcher.group(3);
 		}
 		return result;
@@ -321,10 +319,10 @@ public class SMSReceiver extends BroadcastReceiver {
 	private String getHTMLAddress(String text) {
 		String result = null;
 		Pattern htmlPattern = Pattern
-				.compile("^(.*\\s+)?(((http|https)://)|(www\\.))+(([a-zA-Z0-9\\._-]+\\.[a-zA-Z]{2,6})|([0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}))(/[a-zA-Z0-9\\&amp;%_\\./-~-]*)?");
+				.compile("^(.*\\s+)?((((http|https)://)|(www\\.))+(([a-zA-Z0-9\\._-]+\\.[a-zA-Z]{2,6})|([0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}))(/[a-zA-Z0-9\\&amp;%_\\./-~-]*)?)((\\s+)|$)");
 		Matcher htmlMatcher = htmlPattern.matcher(text);
-		if (htmlMatcher.matches())
-			result = htmlMatcher.group(0);
+		if (htmlMatcher.matches() && htmlMatcher.groupCount() > 2)
+			result = htmlMatcher.group(2);
 		return result;
 	}
 }

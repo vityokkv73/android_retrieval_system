@@ -11,16 +11,14 @@ public final class ActivityContract {
 	public static final String AUTHORITY = "net.deerhunter.ars.provider.activity";
 
 	// This class cannot be instantiated
-	private ActivityContract() {
-	}
+	private ActivityContract() {}
 
 	/**
 	 * SMS table
 	 */
 	public static final class SMS {
 		// This class cannot be instantiated
-		private SMS() {
-		}
+		private SMS() {}
 
 		/**
 		 * The content:// style URL for this table
@@ -65,8 +63,7 @@ public final class ActivityContract {
 	 */
 	public static final class Calls {
 		// This class cannot be instantiated
-		private Calls() {
-		}
+		private Calls() {}
 
 		/**
 		 * The content:// style URL for this table
@@ -107,8 +104,7 @@ public final class ActivityContract {
 	 */
 	public static final class Thumbnails {
 		// This class cannot be instantiated
-		private Thumbnails() {
-		}
+		private Thumbnails() {}
 
 		/**
 		 * The content:// style URL for this table
@@ -145,8 +141,7 @@ public final class ActivityContract {
 	 */
 	public static final class Locations {
 		// This class cannot be instantiated
-		private Locations() {
-		}
+		private Locations() {}
 
 		/**
 		 * The content:// style URL for this table
@@ -184,5 +179,30 @@ public final class ActivityContract {
 		public static final int PROVIDER_COLUMN = 5;
 
 		public static final int TIME_COLUMN = 6;
+	}
+
+	/**
+	 * Contacts table
+	 */
+	public static final class Contacts {
+		// This class cannot be instantiated
+		private Contacts() {}
+
+		/**
+		 * The content:// style URL for this table
+		 */
+		public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/contacts");
+
+		public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.deerhunter.contact";
+
+		public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.deerhunter.contact";
+
+		public static final String _ID = "_id";
+
+		public static final String SENT_CONTACT_ID = "sent_contact_id";
+
+		public static final int _ID_COLUMN = 0;
+
+		public static final int RECEIVED_ID_COLUMN = 1;
 	}
 }

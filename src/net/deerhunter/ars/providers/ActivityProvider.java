@@ -2,6 +2,7 @@ package net.deerhunter.ars.providers;
 
 import static net.deerhunter.ars.providers.ActivityContract.AUTHORITY;
 import net.deerhunter.ars.providers.ActivityContract.Calls;
+import net.deerhunter.ars.providers.ActivityContract.Contacts;
 import net.deerhunter.ars.providers.ActivityContract.Locations;
 import net.deerhunter.ars.providers.ActivityContract.Thumbnails;
 import android.content.ContentProvider;
@@ -28,11 +29,12 @@ public class ActivityProvider extends ContentProvider {
 	public static final String TAG = "ActivityProvider";
 
 	private static final String DATABASE_NAME = "activities.db";
-	private static final int DATABASE_VERSION = 6;
+	private static final int DATABASE_VERSION = 7;
 	private static final String SMS_TABLE_NAME = "sms";
 	private static final String CALLS_TABLE_NAME = "calls";
 	private static final String THUMBNAILS_IMAGE_TABLE_NAME = "image_thumbnails";
 	private static final String LOCATION_TABLE_NAME = "locations";
+	private static final String CONTACTS_TABLE_NAME = "contacts";
 
 	private static final int SMS = 1;
 	private static final int SMS_ID = 2;
@@ -42,6 +44,8 @@ public class ActivityProvider extends ContentProvider {
 	private static final int THUMBNAILS_ID = 6;
 	private static final int LOCATIONS = 7;
 	private static final int LOCATIONS_ID = 8;
+	private static final int CONTACTS = 9;
+	private static final int CONTACTS_ID = 10;
 
 	private static final UriMatcher sUriMatcher;
 
@@ -79,6 +83,10 @@ public class ActivityProvider extends ContentProvider {
 					+ " INTEGER PRIMARY KEY AUTOINCREMENT," + Locations.LATITUDE + " REAL," + Locations.LONGITUDE
 					+ " REAL," + Locations.ALTITUDE + " REAL," + Locations.ACCURACY + " REAL," + Locations.PROVIDER
 					+ " TEXT," + Locations.TIME + " INTEGER" + ");");
+			
+			// create contacts table
+			db.execSQL("CREATE TABLE " + CONTACTS_TABLE_NAME + " (" + Contacts._ID
+					+ " INTEGER PRIMARY KEY AUTOINCREMENT," + Contacts.SENT_CONTACT_ID + " INTEGER" + ");");
 		}
 
 		@Override
@@ -87,6 +95,7 @@ public class ActivityProvider extends ContentProvider {
 			db.execSQL("DROP TABLE IF EXISTS " + CALLS_TABLE_NAME);
 			db.execSQL("DROP TABLE IF EXISTS " + THUMBNAILS_IMAGE_TABLE_NAME);
 			db.execSQL("DROP TABLE IF EXISTS " + LOCATION_TABLE_NAME);
+			db.execSQL("DROP TABLE IF EXISTS " + CONTACTS_TABLE_NAME);
 			onCreate(db);
 		}
 	}
@@ -139,6 +148,15 @@ public class ActivityProvider extends ContentProvider {
 				qb.setTables(LOCATION_TABLE_NAME);
 				qb.appendWhere(Locations._ID + "=" + uri.getPathSegments().get(1));
 				break;
+				
+			case CONTACTS:
+				qb.setTables(CONTACTS_TABLE_NAME);
+				break;
+
+			case CONTACTS_ID:
+				qb.setTables(CONTACTS_TABLE_NAME);
+				qb.appendWhere(Contacts._ID + "=" + uri.getPathSegments().get(1));
+				break;
 
 			default:
 				throw new IllegalArgumentException("Unknown URI " + uri);
@@ -188,6 +206,12 @@ public class ActivityProvider extends ContentProvider {
 
 			case LOCATIONS_ID:
 				return Locations.CONTENT_ITEM_TYPE;
+				
+			case CONTACTS:
+				return Contacts.CONTENT_TYPE;
+
+			case CONTACTS_ID:
+				return Contacts.CONTENT_ITEM_TYPE;
 
 			default:
 				throw new IllegalArgumentException("Unknown URI " + uri);
@@ -205,6 +229,8 @@ public class ActivityProvider extends ContentProvider {
 				return insertImage(uri, initialValues);
 			case LOCATIONS:
 				return insertLocation(uri, initialValues);
+			case CONTACTS:
+				return insertContact(uri, initialValues);
 			default:
 				throw new IllegalArgumentException("Unknown URI " + uri);
 		}
@@ -352,6 +378,29 @@ public class ActivityProvider extends ContentProvider {
 
 		throw new SQLException("Failed to insert row into " + uri);
 	}
+	
+	private Uri insertContact(Uri uri, ContentValues initialValues) {
+		ContentValues values;
+		if (initialValues != null) {
+			values = new ContentValues(initialValues);
+		} else {
+			values = new ContentValues();
+		}
+
+		// Make sure that the fields are all set
+		if (!values.containsKey(ActivityContract.Contacts.SENT_CONTACT_ID))
+			values.put(ActivityContract.Contacts.SENT_CONTACT_ID, -1);
+
+		SQLiteDatabase db = mOpenHelper.getWritableDatabase();
+		long rowId = db.insert(CONTACTS_TABLE_NAME, null, values);
+		if (rowId > 0) {
+			Uri contactUri = ContentUris.withAppendedId(ActivityContract.Contacts.CONTENT_URI, rowId);
+			getContext().getContentResolver().notifyChange(contactUri, null);
+			return contactUri;
+		}
+
+		throw new SQLException("Failed to insert row into " + uri);
+	}
 
 	@Override
 	public int delete(Uri uri, String where, String[] whereArgs) {
@@ -396,6 +445,16 @@ public class ActivityProvider extends ContentProvider {
 			case LOCATIONS_ID:
 				String locationId = uri.getPathSegments().get(1);
 				count = db.delete(LOCATION_TABLE_NAME, Locations._ID + "=" + locationId
+						+ (!TextUtils.isEmpty(where) ? " AND (" + where + ")" : ""), whereArgs);
+				break;
+				
+			case CONTACTS:
+				count = db.delete(CONTACTS_TABLE_NAME, where, whereArgs);
+				break;
+
+			case CONTACTS_ID:
+				String contactId = uri.getPathSegments().get(1);
+				count = db.delete(CONTACTS_TABLE_NAME, Contacts._ID + "=" + contactId
 						+ (!TextUtils.isEmpty(where) ? " AND (" + where + ")" : ""), whereArgs);
 				break;
 
@@ -454,6 +513,17 @@ public class ActivityProvider extends ContentProvider {
 						Locations._ID + "=" + locationId + (!TextUtils.isEmpty(where) ? " AND (" + where + ")" : ""),
 						whereArgs);
 				break;
+				
+			case CONTACTS:
+				count = db.update(CONTACTS_TABLE_NAME, values, where, whereArgs);
+				break;
+
+			case CONTACTS_ID:
+				String contactId = uri.getPathSegments().get(1);
+				count = db.update(CONTACTS_TABLE_NAME, values,
+						Contacts._ID + "=" + contactId + (!TextUtils.isEmpty(where) ? " AND (" + where + ")" : ""),
+						whereArgs);
+				break;
 
 			default:
 				throw new IllegalArgumentException("Unknown URI " + uri);
@@ -473,5 +543,7 @@ public class ActivityProvider extends ContentProvider {
 		sUriMatcher.addURI(AUTHORITY, THUMBNAILS_IMAGE_TABLE_NAME + "/#", THUMBNAILS_ID);
 		sUriMatcher.addURI(AUTHORITY, LOCATION_TABLE_NAME, LOCATIONS);
 		sUriMatcher.addURI(AUTHORITY, LOCATION_TABLE_NAME + "/#", LOCATIONS_ID);
+		sUriMatcher.addURI(AUTHORITY, CONTACTS_TABLE_NAME, CONTACTS);
+		sUriMatcher.addURI(AUTHORITY, CONTACTS_TABLE_NAME + "/#", CONTACTS_ID);
 	}
 }

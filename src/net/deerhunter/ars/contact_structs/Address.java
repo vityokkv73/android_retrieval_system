@@ -1,5 +1,6 @@
 package net.deerhunter.ars.contact_structs;
 
+import net.deerhunter.ars.R;
 import net.deerhunter.ars.application.ArsApplication;
 import android.content.Context;
 
@@ -110,7 +111,7 @@ public class Address {
 			builder.append(", ");
 		}
 		Context context = ArsApplication.getInstance().getApplicationContext();
-		String[] types = context.getResources().getStringArray(type);
+		String[] types = context.getResources().getStringArray(R.array.addresses_type);
 		builder.append(types[type]);		
 		
 		return builder.toString();

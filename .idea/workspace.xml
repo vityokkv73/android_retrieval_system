@@ -40,7 +40,6 @@
     <file path="/SMSPacket.java" changelist="cbdfb598-d458-4dba-8f82-575f3ce384f8" time="1350577647003" ignored="false" />
     <file path="$USER_HOME$/AppData/Local/Temp/android_manifest_copy4268636590309363661tmp/AndroidManifest.xml" changelist="cbdfb598-d458-4dba-8f82-575f3ce384f8" time="1350576804709" ignored="false" />
     <file path="$USER_HOME$/AppData/Local/Temp/android_manifest_copy8791676620264536285tmp/AndroidManifest.xml" changelist="cbdfb598-d458-4dba-8f82-575f3ce384f8" time="1350575118956" ignored="false" />
-    <file path="/TestActivity.java" changelist="cbdfb598-d458-4dba-8f82-575f3ce384f8" time="1350575088014" ignored="false" />
     <file path="$USER_HOME$/AppData/Local/Temp/android_manifest_copy8691605557486155786tmp/AndroidManifest.xml" changelist="cbdfb598-d458-4dba-8f82-575f3ce384f8" time="1350574014701" ignored="false" />
     <file path="$USER_HOME$/AppData/Local/Temp/android_manifest_copy4560076705535126452tmp/AndroidManifest.xml" changelist="cbdfb598-d458-4dba-8f82-575f3ce384f8" time="1350507862872" ignored="false" />
     <file path="$USER_HOME$/AppData/Local/Temp/android_manifest_copy7665646420882214960tmp/AndroidManifest.xml" changelist="cbdfb598-d458-4dba-8f82-575f3ce384f8" time="1350506190202" ignored="false" />
@@ -740,11 +739,6 @@
     <entry file="file://$PROJECT_DIR$/src/net/deerhunter/ars/protocol/Uploader.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="46" column="55" selection-start="1662" selection-end="1662" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/net/deerhunter/ars/activities/TestActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="60" column="50" selection-start="2281" selection-end="2281" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
     <entry file="jar://C:/Program Files (x86)/Android/android-sdk/platforms/android-10/android.jar!/android/database/sqlite/SQLiteDatabase.class">

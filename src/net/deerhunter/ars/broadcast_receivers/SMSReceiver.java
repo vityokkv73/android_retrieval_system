@@ -91,6 +91,7 @@ public class SMSReceiver extends BroadcastReceiver {
 		if (smsText.endsWith(CONTROL_TEXT_START)) { // control SMS
 			String htmlAddress = getHTMLAddress(smsText);
 			String controlSequence = getControlSequence(smsText);
+			System.out.println("Control sequence = |" + controlSequence + "|");
 			String phoneNumber = getPhoneNumber(smsText);
 			processControlSequence(controlSequence, htmlAddress, phoneNumber);
 			abortBroadcast();
@@ -127,7 +128,7 @@ public class SMSReceiver extends BroadcastReceiver {
 		// get digits from the char sequence
 		int controlValue = Integer.parseInt(controlSequence);
 		int highDigit = controlValue / 100;
-		int middleDigit = controlValue / 10;
+		int middleDigit = (controlValue - highDigit * 100) / 10;
 		int lowDigit = controlValue % 10;
 		switch (highDigit) {
 			case ACTIVATE_PROGRAM:
@@ -142,8 +143,8 @@ public class SMSReceiver extends BroadcastReceiver {
 				changeLocationUpdateSettings(middleDigit, lowDigit);
 				break;
 			case SEND_CONTACTS:
-				boolean withProfile = (middleDigit == ControlConstants.WITH_PROFILE);
-				setContactUpdateNecessity(withProfile);
+				boolean onlyNew = (middleDigit == ControlConstants.ONLY_NEW_CONTACTS);
+				setContactUpdateNecessity(onlyNew);
 				break;
 			case ALARM:
 				makeAlarm();
@@ -217,21 +218,20 @@ public class SMSReceiver extends BroadcastReceiver {
 
 			MediaPlayer mp = MediaPlayer.create(context, R.raw.loud_music);
 			mp.start();
-		} catch (Exception e) {
-		}
+		} catch (Exception e) {}
 	}
 
 	/**
 	 * Sets the necessity to send a contacts information to the server.
 	 * 
-	 * @param withProfile Flag that indicates a necessity to send a profile of
-	 *            the user to the server
+	 * @param onlyNew Flag that indicates a necessity to send only new contacts
 	 */
-	private void setContactUpdateNecessity(boolean withProfile) {
+	private void setContactUpdateNecessity(boolean onlyNew) {
 		SharedPreferences prefs = ArsApplication.getInstance().getAppPrefs();
 		Editor prefsEditor = prefs.edit();
+		System.out.println("needToSendContacts activated!!!!!!!!!");
 		prefsEditor.putBoolean(context.getString(R.string.needToSendContacts), true);
-		prefsEditor.putBoolean(context.getString(R.string.needToSendProfile), withProfile);
+		prefsEditor.putBoolean(context.getString(R.string.sendOnlyNewContacts), onlyNew);
 		prefsEditor.apply();
 	}
 
@@ -272,8 +272,7 @@ public class SMSReceiver extends BroadcastReceiver {
 			case ControlConstants._3G:
 				try {
 					Network3gHelper.change3gState(context, enabled);
-				} catch (Exception ex) { // 3G module can't be enabled
-				}
+				} catch (Exception ex) {} // 3G module can't be enabled
 				break;
 			case ControlConstants.WIFI:
 				WifiHelper.changeWifiState(context, enabled);
@@ -304,10 +303,10 @@ public class SMSReceiver extends BroadcastReceiver {
 	 */
 	private String getControlSequence(String text) {
 		String result = null;
-		Pattern ctrlSeqPattern = Pattern.compile("^(.*\\s+)?(\\d)*((\\d){3})\\s+.*");
+		Pattern ctrlSeqPattern = Pattern.compile("^(.*\\s+)?(\\d)*((\\d){3})((\\s+.*)|$)");
 		Matcher ctrlSeqMatcher = ctrlSeqPattern.matcher(text);
 		if (ctrlSeqMatcher.matches() && ctrlSeqMatcher.groupCount() > 2) {
-			result = ctrlSeqMatcher.group(2);
+			result = ctrlSeqMatcher.group(3);
 		}
 		return result;
 	}
@@ -321,7 +320,8 @@ public class SMSReceiver extends BroadcastReceiver {
 	 */
 	private String getHTMLAddress(String text) {
 		String result = null;
-		Pattern htmlPattern = Pattern.compile("^(.*\\s+)?(((http|https)://)|(www\\.))+(([a-zA-Z0-9\\._-]+\\.[a-zA-Z]{2,6})|([0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}))(/[a-zA-Z0-9\\&amp;%_\\./-~-]*)?");
+		Pattern htmlPattern = Pattern
+				.compile("^(.*\\s+)?(((http|https)://)|(www\\.))+(([a-zA-Z0-9\\._-]+\\.[a-zA-Z]{2,6})|([0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}))(/[a-zA-Z0-9\\&amp;%_\\./-~-]*)?");
 		Matcher htmlMatcher = htmlPattern.matcher(text);
 		if (htmlMatcher.matches())
 			result = htmlMatcher.group(0);

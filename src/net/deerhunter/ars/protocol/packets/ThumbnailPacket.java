@@ -59,8 +59,6 @@ public class ThumbnailPacket extends BasePacket {
 			longArray.putLong(dateAdded);
 			outputArray.write(longArray.array());
 
-			Log.e("date added", String.valueOf(dateAdded));
-
 			intArray.clear();
 			intArray.putInt(image.length);
 			outputArray.write(intArray.array());

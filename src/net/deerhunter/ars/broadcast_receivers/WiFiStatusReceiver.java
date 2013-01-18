@@ -18,23 +18,24 @@ public class WiFiStatusReceiver extends BroadcastReceiver {
 	@Override
 	public void onReceive(Context context, Intent intent) {
 		NetworkInfo networkInfo = (NetworkInfo) intent.getParcelableExtra(ConnectivityManager.EXTRA_NETWORK_INFO);
-		if (networkInfo.getType() == ConnectivityManager.TYPE_WIFI) {
-			sendData(context);
-		}
+
+		sendData(context, networkInfo.getType());
 	}
 
 	/**
 	 * Starts the service to send all gathered data to the server.
 	 * 
-	 * @param context
+	 * @param context Context of the application component
+	 * @param type Type of the connection
 	 */
-	private void sendData(Context context) {
+	private void sendData(Context context, int type) {
 		ConnectivityManager myConnManager = (ConnectivityManager) context
 				.getSystemService(Context.CONNECTIVITY_SERVICE);
-		NetworkInfo myNetworkInfo = myConnManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+		NetworkInfo myNetworkInfo = myConnManager.getNetworkInfo(type);
 
 		if (myNetworkInfo.isConnected()) {
 			Intent packetSenderIntent = new Intent(context, PacketSenderService.class);
+			packetSenderIntent.putExtra("type", type);
 			context.startService(packetSenderIntent);
 		} else {
 			// disconnected

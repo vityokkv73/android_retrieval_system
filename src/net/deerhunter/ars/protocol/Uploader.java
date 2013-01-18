@@ -44,6 +44,8 @@ public class Uploader {
 		HttpURLConnection httpUrlConnection = (HttpURLConnection) new URL(serverAddress + System.currentTimeMillis())
 				.openConnection();
 		httpUrlConnection.setDoOutput(true);
+		httpUrlConnection.setReadTimeout(10000);
+		httpUrlConnection.setConnectTimeout(10000);
 		httpUrlConnection.setRequestMethod("POST");	
 		OutputStream os = httpUrlConnection.getOutputStream();
 		BufferedOutputStream bos = new BufferedOutputStream(os);
@@ -65,8 +67,6 @@ public class Uploader {
 		String s = in.readLine();
 		if (s != null && s.equals("Done"))
 			result = true;
-		
-		System.out.println(s);
 		
 		in.close();
 		fis.close();

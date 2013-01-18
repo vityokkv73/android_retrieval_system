@@ -31,8 +31,8 @@ public class ControlConstants {
 	public static final int EVERY_DAY = 9;
 	public static final int WITHOUT_PROFILE = 0;
 	public static final int ONLY_NEW_CONTACTS = 1;
-	public static final int MICRO_THUMB_PHOTO = 0;
+	public static final int MICRO_THUMB_PHOTO = 3;
 	public static final int MINI_THUMB_PHOTO = 1;
 	public static final int FULL_PHOTO = 2;
-	public static final int WITHOUT_PHOTO = 3;
+	public static final int WITHOUT_PHOTO = 0;
 }

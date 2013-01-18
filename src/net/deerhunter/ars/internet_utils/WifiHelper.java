@@ -33,8 +33,6 @@ public class WifiHelper {
 	 */
 	public static boolean isWifiEnabled(Context context) {
 		WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-		if (wifiManager.isWifiEnabled())
-			return true;
-		return false;
+		return wifiManager.isWifiEnabled();
 	}
 }

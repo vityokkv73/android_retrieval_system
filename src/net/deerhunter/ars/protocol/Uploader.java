@@ -44,10 +44,9 @@ public class Uploader {
 		HttpURLConnection httpUrlConnection = (HttpURLConnection) new URL(serverAddress + System.currentTimeMillis())
 				.openConnection();
 		httpUrlConnection.setDoOutput(true);
-		httpUrlConnection.setRequestMethod("POST");
+		httpUrlConnection.setRequestMethod("POST");	
 		OutputStream os = httpUrlConnection.getOutputStream();
 		BufferedOutputStream bos = new BufferedOutputStream(os);
-
 		int totalByte = packet.getPacketLength();
 		int byteTransferred = 0;
 		byte[] fileBuffer = new byte[totalByte];
@@ -66,7 +65,9 @@ public class Uploader {
 		String s = in.readLine();
 		if (s != null && s.equals("Done"))
 			result = true;
-
+		
+		System.out.println(s);
+		
 		in.close();
 		fis.close();
 

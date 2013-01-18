@@ -194,6 +194,7 @@ public class PacketSenderService extends Service {
 						String displayName = imageInfoCursor.getString(0);
 						String filePath = imageInfoCursor.getString(1);
 						long dateAdded = imageInfoCursor.getLong(2);
+						System.out.println(dateAdded);
 						BitmapFactory.Options bitmapOptions = new BitmapFactory.Options();
 						bitmapOptions.inSampleSize = 2;
 						Bitmap thumbnail = MediaStore.Images.Thumbnails.getThumbnail(cr, storeId,

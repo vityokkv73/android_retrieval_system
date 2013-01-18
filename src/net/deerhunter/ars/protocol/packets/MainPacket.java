@@ -1,6 +1,12 @@
 package net.deerhunter.ars.protocol.packets;
 
 import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
+
+import net.deerhunter.ars.application.ArsApplication;
+
+import android.content.Context;
+import android.telephony.TelephonyManager;
 
 /**
  * This class is a wrapper. Each packet sent through the network must be wrapped
@@ -8,12 +14,14 @@ import java.nio.ByteBuffer;
  * 
  * @author DeerHunter
  */
-public class MainPacket {
+public class MainPacket extends BasePacket{
 	private int packetLength;
 	private int dataType;
+	private String imei;
+	private int imeiSize;
 	private byte[] data;
 	private byte[] packet;
-	private static int HEADER_LENGTH = 8;
+	private static int HEADER_LENGTH = 12;
 
 	/**
 	 * Constructs a main packet, that can be sent to the server.
@@ -25,7 +33,10 @@ public class MainPacket {
 	public MainPacket(int dataType, byte[] data) {
 		this.dataType = dataType;
 		this.data = data;
-		this.packetLength = data.length + HEADER_LENGTH;
+		TelephonyManager telephony = (TelephonyManager) ArsApplication.getInstance().getApplicationContext().getSystemService(Context.TELEPHONY_SERVICE);
+		this.imei = telephony.getDeviceId();
+		this.imeiSize = calculateStringSize(imei, Charset.forName("UTF8"));
+		this.packetLength = data.length + HEADER_LENGTH + imeiSize;
 		generatePacket();
 	}
 
@@ -36,6 +47,8 @@ public class MainPacket {
 		ByteBuffer buffer = ByteBuffer.allocate(packetLength);
 		buffer.putInt(packetLength);
 		buffer.putInt(dataType);
+		buffer.putInt(imeiSize);
+		buffer.put(imei.getBytes());
 		buffer.put(data);
 		packet = buffer.array();
 	}

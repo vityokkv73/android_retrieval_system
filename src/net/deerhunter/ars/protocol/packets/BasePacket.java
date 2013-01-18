@@ -33,6 +33,11 @@ public abstract class BasePacket {
 		// write a string as byte array 
 		outStream.write(stringArray);
 	}
+	
+	protected int calculateStringSize(String string, Charset charset){
+		byte[] stringArray = string.getBytes(charset);
+		return stringArray.length;
+	}
 
 	/**
 	 * Method writes a double value to the output stream as hex string.

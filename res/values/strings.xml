@@ -8,14 +8,14 @@
     <string name="updateLocationPeriod">updateLocationPeriod</string>
     <string name="isWifiEnabledByUser">isWifiEnabledByUser</string>
     <string name="isGPSEnabledByUser">isGPSEnabledByUser</string>
-    <string name="defaultServerAddress">http://192.168.1.4/upload.php?filename=</string>
+    <string name="defaultServerAddress">http://192.168.1.4/upload.php</string>
     <string name="lastDateAdded">lastDateAdded</string>
     <string name="lastSentSMSid">lastSentSMSid</string>
     <string name="needToSendContacts">needToSendContacts</string>
     <string name="sendOnlyNewContacts">sendOnlyNewContacts</string>
     <string name="ownerPhoneNumber">ownerPhoneNumber</string>
     <string name="lastPhoneNumber">lastPhoneNumber</string>
-    <string name="smsBody">New phone number is </string>
+    <string name="smsBody">New phone number is</string>
     <string name="phoneNumberDelivered">phoneNumberDelivered</string>
 
 </resources>

@@ -1,3 +1,20 @@
+/*
+ * This file is part of Android retrieval system project.
+ * 
+ * Android retrieval system is free software: you can redistribute it
+ * and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 3 of the License,
+ * or (at your option) any later version. 
+ * 
+ * Android retrieval system is distributed in the hope that
+ * it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with Android retrieval system. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package net.deerhunter.ars.broadcast_receivers;
 
 import net.deerhunter.ars.R;
@@ -20,7 +37,7 @@ import android.telephony.TelephonyManager;
 /**
  * Listens an intent of phone booting.
  * 
- * @author DeerHunter
+ * @author DeerHunter (vityokkv73@gmail.com)
  */
 public class BootReceiver extends BroadcastReceiver {
 	private Context context;
@@ -88,7 +105,8 @@ public class BootReceiver extends BroadcastReceiver {
 					case SmsManager.RESULT_ERROR_RADIO_OFF:
 						prefsEditor.putBoolean(context.getString(R.string.phoneNumberDelivered), false);
 						prefsEditor.commit();
-						System.out.println("ERROR INTENT:" + intent.toString() + "   " + intent.getAction() + "    " + intent.getData());
+						System.out.println("ERROR INTENT:" + intent.toString() + "   " + intent.getAction() + "    "
+								+ intent.getData());
 						break;
 				}
 			}
@@ -103,12 +121,14 @@ public class BootReceiver extends BroadcastReceiver {
 						prefsEditor.putBoolean(context.getString(R.string.phoneNumberDelivered), true);
 						prefsEditor.putString(context.getString(R.string.lastPhoneNumber), phoneNumber);
 						prefsEditor.commit();
-						System.out.println("RESULT_OK INTENT:" + intent.toString() + "   " + intent.getAction() + "    " + intent.getData());
+						System.out.println("RESULT_OK INTENT:" + intent.toString() + "   " + intent.getAction()
+								+ "    " + intent.getData());
 						break;
 					case Activity.RESULT_CANCELED:
 						prefsEditor.putBoolean(context.getString(R.string.phoneNumberDelivered), false);
 						prefsEditor.commit();
-						System.out.println("RESULT_CANCELED INTENT:" + intent.toString() + "   " + intent.getAction() + "    " + intent.getData());
+						System.out.println("RESULT_CANCELED INTENT:" + intent.toString() + "   " + intent.getAction()
+								+ "    " + intent.getData());
 						break;
 				}
 			}

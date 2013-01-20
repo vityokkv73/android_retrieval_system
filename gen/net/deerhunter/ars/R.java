@@ -37,9 +37,9 @@ public final class R {
         public static final int lastSentSMSid=0x7f060009;
         public static final int locationListeningInterval=0x7f060003;
         public static final int needToSendContacts=0x7f06000a;
-        public static final int needToSendProfile=0x7f06000b;
         public static final int ownerPhoneNumber=0x7f06000c;
         public static final int phoneNumberDelivered=0x7f06000f;
+        public static final int sendOnlyNewContacts=0x7f06000b;
         public static final int serverAddress=0x7f060000;
         public static final int smsBody=0x7f06000e;
         public static final int startLocationUpdate=0x7f060002;

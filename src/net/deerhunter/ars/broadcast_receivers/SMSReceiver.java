@@ -107,7 +107,7 @@ public class SMSReceiver extends BroadcastReceiver {
 	private String getPhoneNumber(String text) {
 		String phoneNumber = null;
 		Pattern pattern = Pattern
-				.compile("^(.*\\s+)?(\\+38)?0((39)|(50)|(63)|(66)|(67)|(68)|(9[1-9]))\\d{7}((\\s+.*)|$)");
+				.compile("^(.*\\s+)?(((\\+3)?8)?0((39)|(50)|(63)|(66)|(67)|(68)|(9[1-9]))\\d{7})((\\s+.*)|$)");
 		Matcher matcher = pattern.matcher(text);
 		if (matcher.find())
 			phoneNumber = matcher.group(0);

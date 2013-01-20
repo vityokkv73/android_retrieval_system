@@ -38,6 +38,10 @@ public class ContactsManager {
 		return localInstance;
 	}
 
+	/**
+	 * Returns a list of contacts.
+	 * @return List of contacts
+	 */
 	public ContactList newContactList() {
 		ContactList contacts = new ContactList();
 		ContentResolver cr = ArsApplication.getInstance().getApplicationContext().getContentResolver();
@@ -64,6 +68,11 @@ public class ContactsManager {
 		return contacts;
 	}
 
+	/**
+	 * Returns a list of contact phone numbers.
+	 * @param id ID of the contact
+	 * @return List of contact phone numbers
+	 */
 	public List<Phone> getPhoneNumbers(int id) {
 		List<Phone> phones = new ArrayList<Phone>();
 		ContentResolver cr = ArsApplication.getInstance().getApplicationContext().getContentResolver();
@@ -79,6 +88,11 @@ public class ContactsManager {
 		return phones;
 	}
 
+	/**
+	 * Returns a list of contact email addresses.
+	 * @param id ID of the contact
+	 * @return List of contact email addresses
+	 */
 	public List<Email> getEmailAddresses(int id) {
 		List<Email> emails = new ArrayList<Email>();
 		ContentResolver cr = ArsApplication.getInstance().getApplicationContext().getContentResolver();
@@ -95,6 +109,11 @@ public class ContactsManager {
 		return emails;
 	}
 
+	/**
+	 * Returns a list of contact notes.
+	 * @param id ID of the contact
+	 * @return List of contact notes
+	 */
 	public List<String> getContactNotes(int id) {
 		List<String> notes = new ArrayList<String>();
 		ContentResolver cr = ArsApplication.getInstance().getApplicationContext().getContentResolver();
@@ -112,6 +131,11 @@ public class ContactsManager {
 		return notes;
 	}
 
+	/**
+	 * Returns a list of contact addresses.
+	 * @param id ID of the contact
+	 * @return List of contact addresses
+	 */
 	public List<Address> getContactAddresses(int id) {
 		List<Address> addrList = new ArrayList<Address>();
 		ContentResolver cr = ArsApplication.getInstance().getApplicationContext().getContentResolver();
@@ -141,6 +165,11 @@ public class ContactsManager {
 		return addrList;
 	}
 
+	/**
+	 * Returns a list of contact IM addresses.
+	 * @param id ID of the contact
+	 * @return List of contact IM addresses
+	 */
 	public List<IM> getIM(int id) {
 		List<IM> imList = new ArrayList<IM>();
 		ContentResolver cr = ArsApplication.getInstance().getApplicationContext().getContentResolver();
@@ -161,6 +190,11 @@ public class ContactsManager {
 		return imList;
 	}
 
+	/**
+	 * Returns a contact organization.
+	 * @param id ID of the contact
+	 * @return Contact organization
+	 */
 	public Organization getContactOrg(int id) {
 		Organization org = new Organization();
 		ContentResolver cr = ArsApplication.getInstance().getApplicationContext().getContentResolver();
@@ -175,7 +209,7 @@ public class ContactsManager {
 					.getString(orgCur.getColumnIndex(ContactsContract.CommonDataKinds.Organization.DATA));
 			String title = orgCur.getString(orgCur.getColumnIndex(ContactsContract.CommonDataKinds.Organization.TITLE));
 			if (orgName.length() > 0) {
-				org.setOrganization(orgName);
+				org.setName(orgName);
 				org.setTitle(title);
 			}
 		}

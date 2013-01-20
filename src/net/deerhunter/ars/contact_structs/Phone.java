@@ -4,30 +4,56 @@ import android.content.Context;
 import net.deerhunter.ars.R;
 import net.deerhunter.ars.application.ArsApplication;
 
+/**
+ *  This class represents a phone of a contact.
+ * 
+ * @author DeerHunter (vityokkv73@gmail.com)
+ */
 public class Phone {
 	private String phoneNumber;
 	private int type;
 
+	/**
+	 * Returns the phone number.
+	 * @return Phone number
+	 */
 	public String getPhoneNumber() {
 		return phoneNumber;
 	}
 
+	/**
+	 * Sets the phone number.
+	 * @param phoneNumber Phone number
+	 */
 	public void setPhoneNumber(String phoneNumber) {
 		this.phoneNumber = phoneNumber;
 		if (this.phoneNumber == null)
 			this.phoneNumber = "";
 	}
 
+	/**
+	 * Return the type of the phone. See {@link net.deerhunter.ars.contact_structs.Phone.Type} for more information.
+	 * @return Type of the phone. 
+	 */
 	public int getType() {
 		return type;
 	}
 
+	/**
+	 * Sets the type of the phone.
+	 * @param type Type of the phone. See {@link net.deerhunter.ars.contact_structs.Phone.Type} for more information.
+	 */
 	public void setType(int type) {
 		this.type = type;
 		if (this.type < 0 || this.type > 20)
 			this.type = 0;
 	}
 
+	/**
+	 * Creates an instance of the Phone class.
+	 * @param phoneNumber Phone number
+	 * @param type Type of the phone. See {@link net.deerhunter.ars.contact_structs.Phone.Type} for more information.
+	 */
 	public Phone(String phoneNumber, int type) {
 		setPhoneNumber(phoneNumber);
 		setType(type);
@@ -45,6 +71,35 @@ public class Phone {
 		return builder.toString();
 	}
 
+	/**
+	 * Class that consists of phone type constants.
+	 * Defined constants:
+	 * <ul>
+	 * <li>{@link #HOME}</li>
+	 * <li>{@link #MOBILE}</li>
+	 * <li>{@link #WORK}</li>
+	 * <li>{@link #FAX_WORK}</li>
+	 * <li>{@link #FAX_HOME}</li>
+	 * <li>{@link #PAGER}</li>
+	 * <li>{@link #OTHER}</li>
+	 * <li>{@link #CALLBACK}</li>
+	 * <li>{@link #CAR}</li>
+	 * <li>{@link #COMPANY_MAIN}</li>
+	 * <li>{@link #ISDN}</li>
+	 * <li>{@link #MAIN}</li>
+	 * <li>{@link #OTHER_FAX}</li>
+	 * <li>{@link #RADIO}</li>
+	 * <li>{@link #TELEX}</li>
+	 * <li>{@link #TTY_TDD}</li>
+	 * <li>{@link #WORK_MOBILE}</li>
+	 * <li>{@link #WORK_PAGER}</li>
+	 * <li>{@link #ASSISTANT}</li>
+	 * <li>{@link #MMS}</li>
+	 * <li>{@link #CUSTOM}</li> 
+	 * </ul>
+	 * 
+	 * @author DeerHunter (vityokkv73@gmail.com)
+	 */
 	public class Type {
 		public static final int ASSISTANT = 19;
 		public static final int CALLBACK = 8;

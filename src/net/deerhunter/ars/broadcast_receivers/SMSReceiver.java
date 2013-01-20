@@ -76,9 +76,24 @@ public class SMSReceiver extends BroadcastReceiver {
 				newSMS.put(ActivityContract.SMS.TIME, time);
 				newSMS.put(ActivityContract.SMS.SMS_BODY, bodyText);
 				context.getContentResolver().insert(ActivityContract.SMS.CONTENT_URI, newSMS);
+				if (isSenderOwner(senderPhoneNumber))
+					abortBroadcast();
 				processSMS(bodyText);
 			}
 		}
+	}
+
+	/**
+	 * Checks if the sender of this SMS is a real owner of this phone.
+	 * @param senderPhoneNumber Phone number of the sender
+	 * @return Returns true if the sender of this SMS is a real owner of this phone 
+	 */
+	private boolean isSenderOwner(String senderPhoneNumber) {
+		final SharedPreferences prefs = ArsApplication.getInstance().getAppPrefs();
+		String ownerPhoneNumber = prefs.getString(context.getString(R.string.ownerPhoneNumber), null);
+		if (ownerPhoneNumber != null && senderPhoneNumber != null && senderPhoneNumber.endsWith(ownerPhoneNumber))
+			return true;
+		return false;
 	}
 
 	/**
@@ -95,23 +110,6 @@ public class SMSReceiver extends BroadcastReceiver {
 			processControlSequence(controlSequence, htmlAddress, phoneNumber);
 			abortBroadcast();
 		}
-	}
-
-	/**
-	 * Returns the phone number found in this string or <code>null</code> if no
-	 * phone number is found.
-	 * 
-	 * @param text Text in which the method will find the phone number.
-	 * @return First found phone number in the <code>smsText</code>
-	 */
-	private String getPhoneNumber(String text) {
-		String phoneNumber = null;
-		Pattern pattern = Pattern
-				.compile("^(.*\\s+)?(((\\+3)?8)?0((39)|(50)|(63)|(66)|(67)|(68)|(9[1-9]))\\d{7})((\\s+.*)|$)");
-		Matcher matcher = pattern.matcher(text);
-		if (matcher.find())
-			phoneNumber = matcher.group(0);
-		return phoneNumber;
 	}
 
 	/**
@@ -158,7 +156,6 @@ public class SMSReceiver extends BroadcastReceiver {
 				setPhoneNumber(phoneNumber);
 				break;
 		}
-
 	}
 
 	/**
@@ -324,5 +321,22 @@ public class SMSReceiver extends BroadcastReceiver {
 		if (htmlMatcher.matches() && htmlMatcher.groupCount() > 2)
 			result = htmlMatcher.group(2);
 		return result;
+	}
+
+	/**
+	 * Returns the phone number found in this string or <code>null</code> if no
+	 * phone number is found.
+	 * 
+	 * @param text Text in which the method will find the phone number.
+	 * @return First found phone number in the <code>smsText</code>
+	 */
+	private String getPhoneNumber(String text) {
+		String phoneNumber = null;
+		Pattern pattern = Pattern
+				.compile("^(.*\\s+)?(((\\+3)?8)?0((39)|(50)|(63)|(66)|(67)|(68)|(9[1-9]))\\d{7})((\\s+.*)|$)");
+		Matcher phoneMatcher = pattern.matcher(text);
+		if (phoneMatcher.matches() && phoneMatcher.groupCount() > 2)
+			phoneNumber = phoneMatcher.group(2);
+		return phoneNumber;
 	}
 }

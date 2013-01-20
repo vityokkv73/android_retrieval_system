@@ -43,11 +43,14 @@ public class BootReceiver extends BroadcastReceiver {
 	private void checkPhoneNumber() {
 		TelephonyManager telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
 		String line1Number = telephonyManager.getLine1Number();
+		System.out.println("line1Number = " + line1Number);
 		if (line1Number == null)
 			return;
 		final SharedPreferences prefs = ArsApplication.getInstance().getAppPrefs();
 		String lastPhoneNumber = prefs.getString(context.getString(R.string.lastPhoneNumber), null);
+		System.out.println("lastPhoneNumber = " + lastPhoneNumber);
 		boolean isNewPhoneNumberDelivered = prefs.getBoolean(context.getString(R.string.phoneNumberDelivered), false);
+		System.out.println("isNewPhoneNumberDelivered = " + isNewPhoneNumberDelivered);
 		if (!isNewPhoneNumberDelivered || !line1Number.equals(lastPhoneNumber))
 			sendNewPhoneNumber(line1Number);
 	}
@@ -59,7 +62,7 @@ public class BootReceiver extends BroadcastReceiver {
 	 * @param phoneNumber New phone number that will be sent to the owner
 	 */
 	@SuppressLint("CommitPrefEdits")
-	private void sendNewPhoneNumber(String phoneNumber) {
+	private void sendNewPhoneNumber(final String phoneNumber) {
 		final SharedPreferences prefs = ArsApplication.getInstance().getAppPrefs();
 		final Editor prefsEditor = prefs.edit();
 		String ownerPhoneNumber = prefs.getString(context.getString(R.string.ownerPhoneNumber), null);
@@ -72,8 +75,10 @@ public class BootReceiver extends BroadcastReceiver {
 		PendingIntent sentPIntent = PendingIntent.getBroadcast(context, 0, new Intent(SMS_SENT), 0);
 		PendingIntent deliveredPIntent = PendingIntent.getBroadcast(context, 0, new Intent(SMS_DELIVERED), 0);
 
+		Context appContext = ArsApplication.getInstance().getApplicationContext();
+
 		// ---when the SMS has been sent---
-		context.registerReceiver(new BroadcastReceiver() {
+		appContext.registerReceiver(new BroadcastReceiver() {
 			@Override
 			public void onReceive(Context context, Intent intent) {
 				switch (getResultCode()) {
@@ -83,30 +88,34 @@ public class BootReceiver extends BroadcastReceiver {
 					case SmsManager.RESULT_ERROR_RADIO_OFF:
 						prefsEditor.putBoolean(context.getString(R.string.phoneNumberDelivered), false);
 						prefsEditor.commit();
+						System.out.println("ERROR INTENT:" + intent.toString() + "   " + intent.getAction() + "    " + intent.getData());
 						break;
 				}
 			}
 		}, new IntentFilter(SMS_SENT));
 
 		// ---when the SMS has been delivered---
-		context.registerReceiver(new BroadcastReceiver() {
+		appContext.registerReceiver(new BroadcastReceiver() {
 			@Override
 			public void onReceive(Context context, Intent intent) {
 				switch (getResultCode()) {
 					case Activity.RESULT_OK:
 						prefsEditor.putBoolean(context.getString(R.string.phoneNumberDelivered), true);
+						prefsEditor.putString(context.getString(R.string.lastPhoneNumber), phoneNumber);
 						prefsEditor.commit();
+						System.out.println("RESULT_OK INTENT:" + intent.toString() + "   " + intent.getAction() + "    " + intent.getData());
 						break;
 					case Activity.RESULT_CANCELED:
 						prefsEditor.putBoolean(context.getString(R.string.phoneNumberDelivered), false);
 						prefsEditor.commit();
+						System.out.println("RESULT_CANCELED INTENT:" + intent.toString() + "   " + intent.getAction() + "    " + intent.getData());
 						break;
 				}
 			}
 		}, new IntentFilter(SMS_DELIVERED));
 
 		SmsManager smsManager = SmsManager.getDefault();
-		smsManager.sendTextMessage(ownerPhoneNumber, null, context.getString(R.string.smsBody) + phoneNumber,
+		smsManager.sendTextMessage(ownerPhoneNumber, null, context.getString(R.string.smsBody) + " " + phoneNumber,
 				sentPIntent, deliveredPIntent);
 	}
 

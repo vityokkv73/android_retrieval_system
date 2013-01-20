@@ -1,44 +1,73 @@
 package net.deerhunter.ars.contact_structs;
 
+/**
+ * This class represents an organization of a contact.
+ * 
+ * @author DeerHunter (vityokkv73@gmail.com)
+ */
 public class Organization {
-	private String organization;
+	private String name;
 	private String title;
 
-	public String getOrganization() {
-		return organization;
+	/**
+	 * Return the name of the organization.
+	 * @return Name of the organization
+	 */
+	public String getName() {
+		return name;
 	}
 
-	public void setOrganization(String organization) {
-		this.organization = organization;
-		if (this.organization == null)
-			this.organization = "";
+	/**
+	 * Sets the name of the organization.
+	 * @param name Name of the organization
+	 */
+	public void setName(String name) {
+		this.name = name;
+		if (this.name == null)
+			this.name = "";
 	}
 
+	/**
+	 * Returns the title of the organization.
+	 * @return Title of the organization
+	 */
 	public String getTitle() {
 		return title;
 	}
 
+	/**
+	 * Sets the title of the organization.
+	 * @param title Title of the organization
+	 */
 	public void setTitle(String title) {
 		this.title = title;
 		if (this.title == null)
 			this.title = "";
 	}
 
-	public Organization(String org, String title) {
-		setOrganization(org);
+	/**
+	 * Creates an instance of the Organization class.
+	 * @param name
+	 * @param title
+	 */
+	public Organization(String name, String title) {
+		setName(name);
 		setTitle(title);
 	}
 
+	/**
+	 * Creates an instance of the Organization class.
+	 */
 	public Organization() {
-		this.organization = "";
+		this.name = "";
 		this.title = "";
 	}
 
 	@Override
 	public String toString() {
-		if (organization.isEmpty())
+		if (name.isEmpty())
 			return "";
-		StringBuilder builder = new StringBuilder(organization);
+		StringBuilder builder = new StringBuilder(name);
 		if (!title.isEmpty()) {
 			builder.append(", ");
 			builder.append(title);

@@ -7,11 +7,11 @@ import java.nio.charset.Charset;
 
 /**
  * This class contains all the information and methods needed to send the
- * thumbnails of the images to the server.
+ * image to the server.
  * 
  * @author DeerHunter
  */
-public class ThumbnailPacket extends BasePacket {
+public class ImagePacket extends BasePacket {
 	private String displayName;
 	private String filePath;
 	private int storeId;
@@ -21,7 +21,7 @@ public class ThumbnailPacket extends BasePacket {
 	private byte[] binaryPacket;
 
 	/**
-	 * Constructs a new ThumbnailPacket using all necessary parameters.
+	 * Constructs a new ImagePacket using all necessary parameters.
 	 * 
 	 * @param displayName Name of the image
 	 * @param filePath Full path to the image
@@ -29,7 +29,7 @@ public class ThumbnailPacket extends BasePacket {
 	 * @param dateAdded Date when the image was added
 	 * @param image Byte array of the image
 	 */
-	public ThumbnailPacket(String displayName, String filePath, int storeId, long dateAdded, byte[] image) {
+	public ImagePacket(String displayName, String filePath, int storeId, long dateAdded, byte[] image) {
 		this.displayName = displayName;
 		this.filePath = filePath;
 		this.storeId = storeId;
@@ -39,7 +39,7 @@ public class ThumbnailPacket extends BasePacket {
 	}
 
 	/**
-	 * Method generates a binary representation of a thumbnail packet.
+	 * Method generates a binary representation of a image packet.
 	 */
 	private void generateBinaryPacket() {
 		ByteArrayOutputStream outputArray = new ByteArrayOutputStream(100000);
@@ -124,7 +124,7 @@ public class ThumbnailPacket extends BasePacket {
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder(300);
-		builder.append("ThumbnailPacket { ");
+		builder.append("ImagePacket { ");
 		builder.append("displayName = " + displayName);
 		builder.append(", filePath = " + filePath);
 		builder.append(", storeId = " + storeId);

@@ -16,7 +16,7 @@ import net.deerhunter.ars.protocol.packets.DataType;
 import net.deerhunter.ars.protocol.packets.LocationPacket;
 import net.deerhunter.ars.protocol.packets.MainPacket;
 import net.deerhunter.ars.protocol.packets.SMSPacket;
-import net.deerhunter.ars.protocol.packets.ThumbnailPacket;
+import net.deerhunter.ars.protocol.packets.ImagePacket;
 import net.deerhunter.ars.providers.ActivityContract;
 import net.deerhunter.ars.providers.ActivityContract.Contacts;
 import net.deerhunter.ars.providers.ActivityContract.Thumbnails;
@@ -220,11 +220,11 @@ public class PacketSenderService extends Service {
 						ByteArrayOutputStream outputStream = new ByteArrayOutputStream(10000);
 						image.compress(CompressFormat.JPEG, 50, outputStream);
 
-						ThumbnailPacket thumbnailPacket = new ThumbnailPacket(displayName, filePath, storeId,
+						ImagePacket thumbnailPacket = new ImagePacket(displayName, filePath, storeId,
 								dateAdded, outputStream.toByteArray());
 
 						boolean uploaded = Uploader.sendPacket(
-								new MainPacket(DataType.THUMBNAIL, thumbnailPacket.getBinaryPacket()),
+								new MainPacket(DataType.IMAGE, thumbnailPacket.getBinaryPacket()),
 								PacketSenderService.this);
 
 						if (uploaded) {

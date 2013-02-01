@@ -43,11 +43,11 @@ public class Network3gHelper {
 			return;
 		final ConnectivityManager connectivityManager = (ConnectivityManager) context
 				.getSystemService(Context.CONNECTIVITY_SERVICE);
-		final Class<?> connectivityManagerClass = Class.forName(connectivityManager.getClass().getName());
+		final Class<?> connectivityManagerClass = connectivityManager.getClass();
 		final Field connectivityManagerField = connectivityManagerClass.getDeclaredField("mService");
 		connectivityManagerField.setAccessible(true);
 		final Object iConnectivityManager = connectivityManagerField.get(connectivityManager);
-		final Class<?> iConnectivityManagerClass = Class.forName(iConnectivityManager.getClass().getName());
+		final Class<?> iConnectivityManagerClass = iConnectivityManager.getClass();
 		final Method setMobileDataEnabledMethod = iConnectivityManagerClass.getDeclaredMethod("setMobileDataEnabled",
 				Boolean.TYPE);
 		setMobileDataEnabledMethod.setAccessible(true);
@@ -65,11 +65,11 @@ public class Network3gHelper {
 	public static boolean is3GEnabled(Context context) throws Exception {
 		final ConnectivityManager connectivityManager = (ConnectivityManager) context
 				.getSystemService(Context.CONNECTIVITY_SERVICE);
-		final Class<?> connectivityManagerClass = Class.forName(connectivityManager.getClass().getName());
+		final Class<?> connectivityManagerClass = connectivityManager.getClass();
 		final Field connectivityManagerField = connectivityManagerClass.getDeclaredField("mService");
 		connectivityManagerField.setAccessible(true);
 		final Object iConnectivityManager = connectivityManagerField.get(connectivityManager);
-		final Class<?> iConnectivityManagerClass = Class.forName(iConnectivityManager.getClass().getName());
+		final Class<?> iConnectivityManagerClass = iConnectivityManager.getClass();
 		final Method getMobileDataEnabledMethod = iConnectivityManagerClass.getDeclaredMethod("getMobileDataEnabled");
 		getMobileDataEnabledMethod.setAccessible(true);
 

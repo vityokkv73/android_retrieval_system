@@ -39,8 +39,7 @@ import android.content.SharedPreferences;
  * @author DeerHunter (vityokkv73@gmail.com)
  */
 public class Uploader {
-	private Uploader() {
-	}
+	private Uploader() {}
 
 	/**
 	 * Sends packets to the server.
@@ -58,12 +57,12 @@ public class Uploader {
 		String serverAddress = prefs.getString(context.getString(R.string.serverAddress),
 				context.getString(R.string.defaultServerAddress));
 
-		HttpURLConnection httpUrlConnection = (HttpURLConnection) new URL(serverAddress + System.currentTimeMillis())
-				.openConnection();
+		HttpURLConnection httpUrlConnection = (HttpURLConnection) new URL(serverAddress).openConnection();
 		httpUrlConnection.setDoOutput(true);
+		httpUrlConnection.setDoInput(true);
 		httpUrlConnection.setReadTimeout(10000);
 		httpUrlConnection.setConnectTimeout(10000);
-		httpUrlConnection.setRequestMethod("POST");	
+		httpUrlConnection.setRequestMethod("POST");
 		OutputStream os = httpUrlConnection.getOutputStream();
 		BufferedOutputStream bos = new BufferedOutputStream(os);
 		int totalByte = packet.getPacketLength();

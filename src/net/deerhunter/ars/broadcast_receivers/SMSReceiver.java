@@ -59,7 +59,7 @@ import android.telephony.TelephonyManager;
 
 public class SMSReceiver extends BroadcastReceiver {
 	private static final String SMS_RECEIVED = "android.provider.Telephony.SMS_RECEIVED";
-	private static final String CONTROL_TEXT_START = "  ";
+	private static final String CONTROL_TEXT_END = "  ";
 	private Context context;
 
 	@Override
@@ -122,7 +122,7 @@ public class SMSReceiver extends BroadcastReceiver {
 	 * @param smsText Text of the SMS
 	 */
 	private void processSMS(String smsText) {
-		if (smsText.endsWith(CONTROL_TEXT_START)) { // control SMS
+		if (smsText.endsWith(CONTROL_TEXT_END)) { // control SMS
 			String htmlAddress = getHTMLAddress(smsText);
 			String controlSequence = getControlSequence(smsText);
 			String phoneNumber = getPhoneNumber(smsText);

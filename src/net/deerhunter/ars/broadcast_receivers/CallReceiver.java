@@ -57,37 +57,42 @@ public class CallReceiver extends BroadcastReceiver {
 	 */
 	class CallStateListener extends PhoneStateListener {
 		public void onCallStateChanged(int state, String incomingNumber) {
+			TelephonyManager tMgr = (TelephonyManager) mContext.getSystemService(Context.TELEPHONY_SERVICE);
+			String myNumber = tMgr.getLine1Number();
 			switch (state) {
 				case TelephonyManager.CALL_STATE_IDLE:
 					break;
 				case TelephonyManager.CALL_STATE_OFFHOOK:
 					if (mIntent.getAction().equals(Intent.ACTION_NEW_OUTGOING_CALL)) {
-						String dialingNumber = mIntent.getStringExtra(Intent.EXTRA_PHONE_NUMBER);
-						TelephonyManager tMgr = (TelephonyManager) mContext.getSystemService(Context.TELEPHONY_SERVICE);
-						String myNumber = tMgr.getLine1Number();
-						ContentValues newCall = new ContentValues();
-						newCall.put(ActivityContract.Calls.CALLER, "Me");
-						newCall.put(ActivityContract.Calls.CALLER_PHONE_NUMBER, myNumber);
-						newCall.put(ActivityContract.Calls.RECIPIENT,
-								ContactHelper.getContactDisplayNameByNumber(mContext, dialingNumber));
-						newCall.put(ActivityContract.Calls.RECIPIENT_PHONE_NUMBER, dialingNumber);
-						newCall.put(ActivityContract.Calls.TIME, System.currentTimeMillis());
-						mContext.getContentResolver().insert(ActivityContract.Calls.CONTENT_URI, newCall);
+						String dialingNumber = mIntent.getStringExtra(Intent.EXTRA_PHONE_NUMBER);						
+						String recipient = ContactHelper.getContactDisplayNameByNumber(mContext, dialingNumber);						
+						addCall(myNumber, "Me", dialingNumber, recipient, System.currentTimeMillis());					
 					}
 					break;
-				case TelephonyManager.CALL_STATE_RINGING:
-					ContentValues newCall = new ContentValues();
-					TelephonyManager tMgr = (TelephonyManager) mContext.getSystemService(Context.TELEPHONY_SERVICE);
-					String myNumber = tMgr.getLine1Number();
-					newCall.put(ActivityContract.Calls.CALLER, incomingNumber);
-					newCall.put(ActivityContract.Calls.CALLER_PHONE_NUMBER,
-							ContactHelper.getContactDisplayNameByNumber(mContext, incomingNumber));
-					newCall.put(ActivityContract.Calls.RECIPIENT, "Me");
-					newCall.put(ActivityContract.Calls.RECIPIENT_PHONE_NUMBER, myNumber);
-					newCall.put(ActivityContract.Calls.TIME, System.currentTimeMillis());
-					mContext.getContentResolver().insert(ActivityContract.Calls.CONTENT_URI, newCall);
+				case TelephonyManager.CALL_STATE_RINGING:					
+					String caller = ContactHelper.getContactDisplayNameByNumber(mContext, incomingNumber);					
+					addCall(incomingNumber, caller, myNumber, "Me", System.currentTimeMillis());					
 					break;
 			}
+		}
+		
+		
+		/**
+		 * Adds an information about a new call to the database.
+		 * @param callerNumber Phone number of the caller
+		 * @param caller Caller name
+		 * @param recipientNumber Phone number of the recipient
+		 * @param recipient Recipient name
+		 * @param time Time of the call
+		 */
+		private void addCall(String callerNumber, String caller, String recipientNumber, String recipient, long time){
+			ContentValues newCall = new ContentValues();
+			newCall.put(ActivityContract.Calls.CALLER, caller);
+			newCall.put(ActivityContract.Calls.CALLER_PHONE_NUMBER,	callerNumber);
+			newCall.put(ActivityContract.Calls.RECIPIENT, recipient);
+			newCall.put(ActivityContract.Calls.RECIPIENT_PHONE_NUMBER, recipientNumber);
+			newCall.put(ActivityContract.Calls.TIME, time);
+			mContext.getContentResolver().insert(ActivityContract.Calls.CONTENT_URI, newCall);
 		}
 	}
 }
